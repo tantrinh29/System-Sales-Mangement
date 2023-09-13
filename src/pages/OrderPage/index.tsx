@@ -179,7 +179,7 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
   const detailOrder = [
     {
       title: "STT",
-      render: (text: any, record: any, index: any) => index + 1,
+      dataIndex: "_id",
     },
     {
       title: "IMAGE",

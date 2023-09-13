@@ -4,7 +4,6 @@ import { combineReducers, createStore, applyMiddleware, compose } from "redux";
 import authReducer, { AuthState } from "./auth/reducers";
 import persistStore from "redux-persist/es/persistStore";
 import thunk from "redux-thunk";
-import { setAuthToken } from "../helpers/setToken";
 import {
   NotificationState,
   notificationReducer,
