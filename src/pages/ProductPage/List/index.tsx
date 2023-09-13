@@ -103,7 +103,7 @@ const ListProduct: React.FC<Props> = ({ setLoadingBarProgress }) => {
   const columns: ColumnsType<DataType> = [
     {
       title: "ID",
-      render: (text, record, index) => index + 1,
+      dataIndex: "_id",
     },
     {
       title: "NAME",

@@ -88,7 +88,7 @@ const UserPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
   const columns = [
     {
       title: "ID",
-      render: (text: any, record: any, index: any) => index + 1,
+      dataIndex: "_id",
     },
     {
       title: "USERNAME",
