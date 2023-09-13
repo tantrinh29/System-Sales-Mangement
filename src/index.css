@@ -1,0 +1,18 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;300;500;600;700&display=swap");
+
+body {
+  font-family: "Inter", sans-serif;
+}
+.custom-carousel .slick-dots li button {
+  background-color: black; /* Thay your_desired_color bằng màu bạn muốn */
+}
+.custom-carousel .slick-dots li.slick-active button {
+  background-color: rgb(216, 216, 225);
+}
+.ant-upload-list {
+  display: none;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
