@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 
 export const CUSTOM_ENV = {
-  API_URL: "http://localhost:8080",
+  API_URL: "https://server-manager.onrender.com",
 };
 export const SIZEFORM = "large";
 export const SECRET_KEY = "LeQuocHuy";
