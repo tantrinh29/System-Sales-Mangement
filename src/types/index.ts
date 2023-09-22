@@ -3,6 +3,7 @@ export interface AuthenticatedUser {
   username: string;
   email: string;
   role: any;
+  verify: any;
   password: string;
 }
 

@@ -70,6 +70,7 @@ const BannerPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
   );
 
   const handleAdd = () => {
+    setFileList("");
     setModalVisible(true);
     setIsEditing(false);
   };
@@ -83,6 +84,7 @@ const BannerPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
   const handleCloseModal = () => {
     setModalVisible(false);
     setIsEditing(false);
+    setFileList("");
     form.resetFields();
   };
 
@@ -222,7 +224,7 @@ const BannerPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
     if (isEditing) {
       form.setFieldsValue({
         nameImage: isDataEdit.nameImage,
-         imagePath: isDataEdit.imagePath,
+        imagePath: isDataEdit.imagePath,
       });
     } else {
       form.resetFields();
@@ -243,7 +245,7 @@ const BannerPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
     bannerService.fetchUpdateBanner(isDataEdit._id, data)
   );
   const postBlogMutation = useMutation((data) =>
-  bannerService.fetchPostBanner(data)
+    bannerService.fetchPostBanner(data)
   );
 
   const onFinish = async (data: any) => {
@@ -360,7 +362,7 @@ const BannerPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
         open={modalVisible}
         onClose={handleCloseModal}
         onOke={handleOke}
-        width={1000}
+        width={700}
         footer={[
           <Button key="cancel" onClick={handleCloseModal}>
             Cancel
@@ -382,68 +384,66 @@ const BannerPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
           autoComplete="off"
           onFinish={onFinish}
         >
-          <div className="grid gap-4 md:grid-cols-2">
-            <div>
-              <Form.Item
-                label="Name"
-                name="nameImage"
-                style={{
-                  marginBottom: 0,
-                }}
-                rules={[{ required: true, message: "* Name is required" }]}
+          <div>
+            <Form.Item
+              label="Name"
+              name="nameImage"
+              style={{
+                marginBottom: 0,
+              }}
+              rules={[{ required: true, message: "* Name is required" }]}
+            >
+              <Input size={SIZEFORM} placeholder="Name ..." />
+            </Form.Item>
+          </div>
+
+          <div>
+            <Form.Item
+              label="* Image"
+              name="imagePath"
+              style={{
+                marginBottom: 0,
+              }}
+              rules={[
+                {
+                  validator: validateFileList,
+                },
+              ]}
+            >
+              <Upload
+                listType="picture"
+                onChange={handleImageChange}
+                onRemove={handleRemove}
+                accept=".jpg,.png"
+                multiple={false} // Chỉ cho phép tải lên 1 ảnh
+                showUploadList={false}
               >
-                <Input size={SIZEFORM} placeholder="Name ..." />
-              </Form.Item>
-            </div>
-        
-            <div>
-              <Form.Item
-                label="* Image"
-                name="imagePath"
-                style={{
-                  marginBottom: 0,
-                }}
-                rules={[
-                  {
-                    validator: validateFileList,
-                  },
-                ]}
-              >
-                <Upload
-                  listType="picture"
-                  onChange={handleImageChange}
-                  onRemove={handleRemove}
-                  accept=".jpg,.png"
-                  multiple={false} // Chỉ cho phép tải lên 1 ảnh
-                  showUploadList={false}
-                >
-                  {fileList ? null : <Button size={SIZEFORM}>Upload</Button>}
-                </Upload>
-                {fileList ? (
-                  <>
-                    <img
-                      className="mt-4"
-                      width={100}
-                      src={fileList.length ? fileList : fileList.preview}
-                      alt=""
-                    />
-                    <Button
-                      icon={<DeleteOutlined />}
-                      size="small"
-                      onClick={() => handleRemove()}
-                    />
-                  </>
-                ) : (
-                  <Empty
-                    className="text-center"
-                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                {fileList ? null : <Button size={SIZEFORM}>Upload</Button>}
+              </Upload>
+              {fileList ? (
+                <>
+                  <img
+                    className="mt-4"
+                    width={100}
+                    src={fileList.length ? fileList : fileList.preview}
+                    alt=""
                   />
-                )}
-                {isImageRequired && (
-                  <div className="text-red-500">* Images is required</div>
-                )}
-              </Form.Item>
-            </div>
+                  <Button
+                    icon={<DeleteOutlined />}
+                    size="small"
+                    onClick={() => handleRemove()}
+                  />
+                </>
+              ) : (
+                <Empty
+                  className="text-center"
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                />
+              )}
+              {isImageRequired && (
+                <div className="text-red-500">* Image is required</div>
+              )}
+            </Form.Item>
           </div>
         </Form>
       </ModalForm>

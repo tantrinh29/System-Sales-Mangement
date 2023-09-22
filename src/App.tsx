@@ -24,6 +24,7 @@ import { CUSTOM_ENV } from "./utils/custom.env";
 import { addNotification } from "./store/notification/actions";
 import PromotionPage from "./pages/PromotionPage";
 import PaymentPage from "./pages/PaymentPage";
+import BannerPage from "./pages/BannerPage";
 function App() {
   const { loadingBarProgress, setLoadingBarProgress } =
     useContext<any>(AppContext);
@@ -148,7 +149,7 @@ function App() {
 
   useEffect(() => {
     if (user) {
-      if (user.role === "ADMIN") {
+      if (user.role === "ADMIN" && user.verify == 1) {
         navigate("/");
       } else {
         navigate("/auth");
@@ -167,7 +168,7 @@ function App() {
         onLoaderFinished={() => setLoadingBarProgress(0)}
       />
       <Routes>
-        {user && user.role === "ADMIN" ? (
+        {user && user.role === "ADMIN" && user.verify == 1 ? (
           <>
             <Route
               path="/"
@@ -207,6 +208,12 @@ function App() {
               path="/orders"
               element={
                 <ListOrder setLoadingBarProgress={setLoadingBarProgress} />
+              }
+            />
+             <Route
+              path="/banners"
+              element={
+                <BannerPage setLoadingBarProgress={setLoadingBarProgress} />
               }
             />
             <Route
