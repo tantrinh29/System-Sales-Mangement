@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { AppContext } from "../../contexts/AppProviderContext";
 import Header from "../Header";
-import Footer from "../Footer";
+// import Footer from "../Footer";
 import SideBar from "../Sidebar";
 
 type Props = {
