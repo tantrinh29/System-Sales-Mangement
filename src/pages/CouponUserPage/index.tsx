@@ -10,7 +10,6 @@ import {
   formatTime,
   transformDataWithKey,
 } from "../../utils/custom.env";
-import { commentService } from "../../services/comment.service";
 import { couponUserService } from "../../services/coupon_user.service";
 
 interface DataType {
