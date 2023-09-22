@@ -27,7 +27,7 @@ const Layout: React.FC<Props> = ({ children }) => {
       <SideBar />
       <div className="p-4 sm:ml-64">
         {children}
-        <Footer />
+        {/* <Footer /> */}
       </div>
     </div>
   );
