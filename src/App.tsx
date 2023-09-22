@@ -25,6 +25,7 @@ import { addNotification } from "./store/notification/actions";
 import PromotionPage from "./pages/PromotionPage";
 import PaymentPage from "./pages/PaymentPage";
 import BannerPage from "./pages/BannerPage";
+import CouponUserPage from "./pages/CouponUserPage";
 function App() {
   const { loadingBarProgress, setLoadingBarProgress } =
     useContext<any>(AppContext);
@@ -210,7 +211,7 @@ function App() {
                 <ListOrder setLoadingBarProgress={setLoadingBarProgress} />
               }
             />
-             <Route
+            <Route
               path="/banners"
               element={
                 <BannerPage setLoadingBarProgress={setLoadingBarProgress} />
@@ -232,6 +233,12 @@ function App() {
               path="/coupons"
               element={
                 <CouponPage setLoadingBarProgress={setLoadingBarProgress} />
+              }
+            />
+            <Route
+              path="/discounts"
+              element={
+                <CouponUserPage setLoadingBarProgress={setLoadingBarProgress} />
               }
             />
 
