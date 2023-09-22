@@ -143,6 +143,7 @@ const EditProduct: React.FC<Props> = ({ setLoadingBarProgress }) => {
     if (isEditing) {
       form.setFieldsValue({
         nameProduct: dataProduct?.nameProduct,
+        quantityProduct: dataProduct?.quantityProduct,
         price_has_dropped: dataProduct?.price_has_dropped,
         initial_price: dataProduct?.initial_price,
         colorsProduct: selectedOptions,
@@ -271,7 +272,7 @@ const EditProduct: React.FC<Props> = ({ setLoadingBarProgress }) => {
     <Layout>
       <div className="flex items-center justify-between">
         <Link
-          to="/product"
+          to="/products"
           className=" text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
         >
           List Products
@@ -300,6 +301,19 @@ const EditProduct: React.FC<Props> = ({ setLoadingBarProgress }) => {
                   rules={[{ required: true, message: "* Name is required" }]}
                 >
                   <Input size={SIZEFORM} placeholder="Asus GB5 ..." />
+                </Form.Item>
+
+                <Form.Item
+                  label="Quantity"
+                  name="quantityProduct"
+                  style={{
+                    marginBottom: 0,
+                  }}
+                  rules={[
+                    { required: true, message: "* Quantity is required" },
+                  ]}
+                >
+                  <Input size={SIZEFORM} placeholder="10 " />
                 </Form.Item>
 
                 <Form.Item

@@ -156,7 +156,7 @@ const AddProduct: React.FC<Props> = ({ setLoadingBarProgress }) => {
         autoComplete="off"
         onFinish={onFinish}
       >
-        <div className="grid gap-6 mb-6 md:grid-cols-2">
+        <div className="grid gap-6 mb-4 md:grid-cols-2">
           <Form.Item
             label="Name"
             name="nameProduct"
@@ -166,6 +166,17 @@ const AddProduct: React.FC<Props> = ({ setLoadingBarProgress }) => {
             rules={[{ required: true, message: "* Name is required" }]}
           >
             <Input size={SIZEFORM} placeholder="Asus GB5 ..." />
+          </Form.Item>
+
+          <Form.Item
+            label="Quantity"
+            name="quantityProduct"
+            style={{
+              marginBottom: 0,
+            }}
+            rules={[{ required: true, message: "* Quantity is required" }]}
+          >
+            <Input size={SIZEFORM} placeholder="10 " />
           </Form.Item>
 
           <Form.Item
@@ -250,7 +261,7 @@ const AddProduct: React.FC<Props> = ({ setLoadingBarProgress }) => {
           </Form.Item>
         </div>
 
-        <div className="mb-6">
+        <div className="mb-4">
           <Form.Item
             label={`Images`}
             name="imagesProduct"
@@ -275,7 +286,7 @@ const AddProduct: React.FC<Props> = ({ setLoadingBarProgress }) => {
           </Form.Item>
         </div>
 
-        <div className="mb-6">
+        <div className="mb-4">
           <Form.Item
             label="Content"
             name="contentProduct"
@@ -298,7 +309,7 @@ const AddProduct: React.FC<Props> = ({ setLoadingBarProgress }) => {
           </Form.Item>
         </div>
 
-        <div className="mb-6">
+        <div className="mb-4">
           <Form.Item
             label="Present"
             name="presentProduct"
@@ -321,7 +332,7 @@ const AddProduct: React.FC<Props> = ({ setLoadingBarProgress }) => {
           </Form.Item>
         </div>
 
-        <div className="mb-6">
+        <div className="mb-4">
           <Form.Item
             label="Specifications"
             name="specificationsProduct"
@@ -346,7 +357,7 @@ const AddProduct: React.FC<Props> = ({ setLoadingBarProgress }) => {
           </Form.Item>
         </div>
 
-        <div className="mb-6">
+        <div className="mb-4">
           <Form.Item
             label="Description"
             name="descriptionProduct"
@@ -371,7 +382,7 @@ const AddProduct: React.FC<Props> = ({ setLoadingBarProgress }) => {
           </Form.Item>
         </div>
 
-        <div className="my-16">
+        <div className="py-5">
           <button
             type="submit"
             className=" text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"

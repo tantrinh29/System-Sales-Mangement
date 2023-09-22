@@ -13,6 +13,7 @@ interface DataType {
   _id: string;
   slugProduct: string;
   nameProduct: string;
+  quantityProduct: string;
   brandID: any;
   initial_price: any;
   price_has_dropped: any;
@@ -112,6 +113,14 @@ const ListProduct: React.FC<Props> = ({ setLoadingBarProgress }) => {
       sorter: true,
       onFilter: (value: any, record: DataType) =>
         record.nameProduct.indexOf(value) === 0,
+    },
+    {
+      title: "QUANTITY",
+      dataIndex: "quantityProduct",
+      key: "quantityProduct",
+      sorter: true,
+      onFilter: (value: any, record: DataType) =>
+        record.quantityProduct.indexOf(value) === 0,
     },
     {
       title: "IMAGE",
