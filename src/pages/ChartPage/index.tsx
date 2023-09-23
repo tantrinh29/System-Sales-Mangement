@@ -15,6 +15,7 @@ import { RANDOM } from "../../utils/custom.env";
 import { useQuery } from "@tanstack/react-query";
 import { orderService } from "../../services/order.service";
 import Loading from "../../components/Loading";
+import PdfExport from "../../components/PdfReport/PdfExport";
 
 ChartJS.register(
   CategoryScale,
@@ -48,6 +49,10 @@ const ChartPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
   });
 
   const groupOrdersByDay = (orders: any) => {
+    if (!orders) {
+      return {}; // Return an empty object if orders is null or undefined
+    }
+
     const groupedData = orders.reduce((result: any, order: any) => {
       const date = new Date(order.createdAt).toLocaleDateString(); // Convert createdAt to a date string
       if (!result[date]) {
@@ -60,11 +65,11 @@ const ChartPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
     return groupedData;
   };
 
-  const groupedData = groupOrdersByDay(orderData);
+  const groupedData = groupOrdersByDay(orderData || []);
 
   //  dữ liệu tổng doanh số và dữ liệu số lượng đơn hàng
   const labels = Object.keys(groupedData);
-//   console.log(groupedData)
+  //   console.log(groupedData)
   const totalSalesData = labels.map((date) => groupedData[date].totalSales);
   const orderCountData = labels.map((date) => groupedData[date].orderCount);
 
@@ -101,15 +106,17 @@ const ChartPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
 
   return (
     <Layout>
-      <div>
-        {isLoading ? (
-          <Loading />
-        ) : isError ? (
-          <div>Error loading data</div>
-        ) : (
-          <Chart type="bar" data={orderOption} options={options} />
-        )}
-      </div>
+      {isLoading ? (
+        <Loading />
+      ) : isError ? (
+        <div>Error loading data</div>
+      ) : (
+        <PdfExport title="thongke">
+          <div className="actual-receipt">
+            <Chart type="bar" data={orderOption} options={options} />
+          </div>
+        </PdfExport>
+      )}
     </Layout>
   );
 };
