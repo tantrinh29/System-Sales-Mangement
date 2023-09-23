@@ -1,10 +1,15 @@
 import { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { AppContext } from "../../contexts/AppProviderContext";
 
 export default function SideBar() {
   const { isOpen, setIsOpen } = useContext<any>(AppContext);
   const [isDropdown, setIsDropdown] = useState<boolean>(false);
+  const location = useLocation();
+
+  const isLinkActive = (to: string) => {
+    return location.pathname === to;
+  };
 
   const handleClick = () => {
     setIsOpen(!isOpen);
@@ -94,7 +99,8 @@ export default function SideBar() {
             <li>
               <Link
                 to="/"
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white
+                  ${isLinkActive("/") ? "bg-gray-100" : ""}`}
               >
                 <svg
                   aria-hidden="true"
@@ -152,7 +158,8 @@ export default function SideBar() {
                   <li>
                     <Link
                       to="/products"
-                      className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                      className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white
+                       ${isLinkActive("/products") ? "bg-gray-100" : ""}`}
                     >
                       Products
                     </Link>
@@ -161,7 +168,8 @@ export default function SideBar() {
                   <li>
                     <Link
                       to="/categories"
-                      className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                      className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white
+                       ${isLinkActive("/categories") ? "bg-gray-100" : ""}`}
                     >
                       Categories
                     </Link>
@@ -170,7 +178,8 @@ export default function SideBar() {
                   <li>
                     <Link
                       to="/brands"
-                      className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                      className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white
+                     ${isLinkActive("/brands") ? "bg-gray-100" : ""}`}
                     >
                       Brands
                     </Link>
@@ -182,7 +191,8 @@ export default function SideBar() {
             <li>
               <Link
                 to="/orders"
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white
+                     ${isLinkActive("/orders") ? "bg-gray-100" : ""}`}
               >
                 <svg
                   aria-hidden="true"
@@ -203,7 +213,8 @@ export default function SideBar() {
             <li>
               <Link
                 to="/banners"
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white
+                ${isLinkActive("/banners") ? "bg-gray-100" : ""}`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -225,7 +236,8 @@ export default function SideBar() {
             <li>
               <Link
                 to="/blogs"
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white
+                ${isLinkActive("/blogs") ? "bg-gray-100" : ""}`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -244,7 +256,8 @@ export default function SideBar() {
             <li>
               <Link
                 to="/promotions"
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white
+                ${isLinkActive("/promotions") ? "bg-gray-100" : ""}`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -265,7 +278,8 @@ export default function SideBar() {
             <li>
               <Link
                 to="/coupons"
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white
+                ${isLinkActive("/coupons") ? "bg-gray-100" : ""}`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -284,7 +298,8 @@ export default function SideBar() {
             <li>
               <Link
                 to="/discounts"
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white
+                ${isLinkActive("/discounts") ? "bg-gray-100" : ""}`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -296,16 +311,15 @@ export default function SideBar() {
                   <path d="M192 0c-41.8 0-77.4 26.7-90.5 64H64C28.7 64 0 92.7 0 128V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V128c0-35.3-28.7-64-64-64H282.5C269.4 26.7 233.8 0 192 0zm0 64a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM72 272a24 24 0 1 1 48 0 24 24 0 1 1 -48 0zm104-16H304c8.8 0 16 7.2 16 16s-7.2 16-16 16H176c-8.8 0-16-7.2-16-16s7.2-16 16-16zM72 368a24 24 0 1 1 48 0 24 24 0 1 1 -48 0zm88 0c0-8.8 7.2-16 16-16H304c8.8 0 16 7.2 16 16s-7.2 16-16 16H176c-8.8 0-16-7.2-16-16z" />
                 </svg>
 
-                <span className="flex-1 ml-3 whitespace-nowrap">
-                  Discounts
-                </span>
+                <span className="flex-1 ml-3 whitespace-nowrap">Discounts</span>
               </Link>
             </li>
 
             <li>
               <Link
                 to="/users"
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white
+                ${isLinkActive("/users") ? "bg-gray-100" : ""}`}
               >
                 <svg
                   aria-hidden="true"
@@ -327,7 +341,8 @@ export default function SideBar() {
             <li>
               <Link
                 to="/comments"
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white
+                ${isLinkActive("/comments") ? "bg-gray-100" : ""}`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -346,7 +361,8 @@ export default function SideBar() {
             <li>
               <Link
                 to="/payments"
-                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white
+                ${isLinkActive("/payments") ? "bg-gray-100" : ""}`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
