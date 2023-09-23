@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { AppContext } from "../../contexts/AppProviderContext";
 import { useSelector } from "react-redux";
@@ -321,28 +321,52 @@ export default function SideBar() {
               </Link>
             </li>
             {user && user.role === "ADMIN" && user.verify == 1 && (
-              <li>
-                <Link
-                  to="/users"
-                  className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white
+              <React.Fragment>
+                <li>
+                  <Link
+                    to="/users"
+                    className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white
                 ${isLinkActive("/users") ? "bg-gray-100" : ""}`}
-                >
-                  <svg
-                    aria-hidden="true"
-                    className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg"
                   >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <span className="flex-1 ml-3 whitespace-nowrap">Users</span>
-                </Link>
-              </li>
+                    <svg
+                      aria-hidden="true"
+                      className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    <span className="flex-1 ml-3 whitespace-nowrap">Users</span>
+                  </Link>
+                </li>
+
+                <li>
+                  <Link
+                    to="/charts"
+                    className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white
+                ${isLinkActive("/charts") ? "bg-gray-100" : ""}`}
+                  >
+                    <svg
+                      aria-hidden="true"
+                      className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                      fill="currentColor"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 448 512"
+                    >
+                      <path d="M160 80c0-26.5 21.5-48 48-48h32c26.5 0 48 21.5 48 48V432c0 26.5-21.5 48-48 48H208c-26.5 0-48-21.5-48-48V80zM0 272c0-26.5 21.5-48 48-48H80c26.5 0 48 21.5 48 48V432c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V272zM368 96h32c26.5 0 48 21.5 48 48V432c0 26.5-21.5 48-48 48H368c-26.5 0-48-21.5-48-48V144c0-26.5 21.5-48 48-48z" />
+                    </svg>
+
+                    <span className="flex-1 ml-3 whitespace-nowrap">
+                      Charts
+                    </span>
+                  </Link>
+                </li>
+              </React.Fragment>
             )}
 
             <li>

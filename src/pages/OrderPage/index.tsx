@@ -178,10 +178,6 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
 
   const detailOrder = [
     {
-      title: "STT",
-      dataIndex: "_id",
-    },
-    {
       title: "IMAGE",
       render: (record: any) => (
         <img
@@ -207,9 +203,10 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
       onFilter: (value: any, record: any) => record.colors.indexOf(value) === 0,
       render: (record: any) => (
         <span
+          className={`inline-block bg-blue-500 text-white text-xs py-1 px-2 rounded-full mr-1`}
           style={{
-            color: record === "black" ? "black" : "red",
             textTransform: "uppercase",
+            fontWeight: "600",
           }}
         >
           {record}
@@ -269,7 +266,7 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
         open={modalVisible}
         onClose={handleCloseModal}
         onOke={handleOke}
-        width={700}
+        width={1000}
         footer={[
           <Button key="cancel" onClick={handleCloseModal}>
             Cancel

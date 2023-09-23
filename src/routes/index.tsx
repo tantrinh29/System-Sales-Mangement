@@ -16,6 +16,7 @@ import CouponPage from "../pages/CouponPage";
 import CouponUserPage from "../pages/CouponUserPage";
 import UserPage from "../pages/UserPage";
 import CommentPage from "../pages/CommentPage";
+import ChartPage from "../pages/ChartPage";
 
 export default function getUserRoutes(user: any, setLoadingBarProgress: any) {
   if (user && user.role === "ADMIN" && user.verify == 1) {
@@ -97,7 +98,12 @@ export default function getUserRoutes(user: any, setLoadingBarProgress: any) {
             <PaymentPage setLoadingBarProgress={setLoadingBarProgress} />
           }
         />
-
+        <Route
+          path="/charts"
+          element={
+            <ChartPage setLoadingBarProgress={setLoadingBarProgress} />
+          }
+        />
         <Route path="*" element={<NotFoundPage />} />
       </>
     );
