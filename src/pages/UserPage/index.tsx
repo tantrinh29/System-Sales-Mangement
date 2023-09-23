@@ -296,6 +296,7 @@ const UserPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
             >
               <Select size={SIZEFORM} placeholder="Role">
                 <Select.Option value="ADMIN">ADMIN</Select.Option>
+                <Select.Option value="STAFF">STAFF</Select.Option>
                 <Select.Option value="MEMBER">MEMBER</Select.Option>
               </Select>
             </Form.Item>
