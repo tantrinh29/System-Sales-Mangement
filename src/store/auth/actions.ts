@@ -34,7 +34,7 @@ export const login = (
         });
         let user: any = await verifyToken(response.result.accessToken);
         
-        if (user.role === "ADMIN") {
+        if (user.role === "ADMIN" && user.verify == 1) {
           const info = await userService.fetchUserByID();
           try {
             dispatch({
@@ -57,7 +57,7 @@ export const login = (
         } else {
           return {
             status: false,
-            message: "Không Đủ Quyền Truy Cập",
+            message: "Không Đủ Quyền Truy Cập Hoặc Chưa Xác Thực Tài Khoản",
           };
         }
       } else {
