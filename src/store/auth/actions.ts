@@ -13,6 +13,8 @@ import { AppState } from "..";
 import { verifyToken } from "../../helpers/verifyToken";
 import { userService } from "../../services/user.service";
 
+const allowedRoles = ["ADMIN", "STAFF"];
+
 export const login = (
   data: any
 ): ThunkAction<void, AppState, null, AuthActionTypes> => {
@@ -34,7 +36,7 @@ export const login = (
         });
         let user: any = await verifyToken(response.result.accessToken);
         
-        if (user.role === "ADMIN" && user.verify == 1) {
+        if (allowedRoles.includes(user.role) && user.verify == 1) {
           const info = await userService.fetchUserByID();
           try {
             dispatch({

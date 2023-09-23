@@ -1,11 +1,17 @@
 import { useContext, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { AppContext } from "../../contexts/AppProviderContext";
+import { useSelector } from "react-redux";
+import { AppState } from "../../store";
+import { AuthenticatedUser } from "../../types";
 
 export default function SideBar() {
   const { isOpen, setIsOpen } = useContext<any>(AppContext);
   const [isDropdown, setIsDropdown] = useState<boolean>(false);
   const location = useLocation();
+  const user = useSelector(
+    (state: AppState) => state.auth.user
+  ) as AuthenticatedUser;
 
   const isLinkActive = (to: string) => {
     return location.pathname === to;
@@ -314,29 +320,30 @@ export default function SideBar() {
                 <span className="flex-1 ml-3 whitespace-nowrap">Discounts</span>
               </Link>
             </li>
-
-            <li>
-              <Link
-                to="/users"
-                className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white
+            {user && user.role === "ADMIN" && user.verify == 1 && (
+              <li>
+                <Link
+                  to="/users"
+                  className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white
                 ${isLinkActive("/users") ? "bg-gray-100" : ""}`}
-              >
-                <svg
-                  aria-hidden="true"
-                  className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path
-                    fillRule="evenodd"
-                    d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                <span className="flex-1 ml-3 whitespace-nowrap">Users</span>
-              </Link>
-            </li>
+                  <svg
+                    aria-hidden="true"
+                    className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  <span className="flex-1 ml-3 whitespace-nowrap">Users</span>
+                </Link>
+              </li>
+            )}
 
             <li>
               <Link

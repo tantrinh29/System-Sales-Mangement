@@ -162,18 +162,19 @@ export default function getUserRoutes(user: any, setLoadingBarProgress: any) {
             <CouponUserPage setLoadingBarProgress={setLoadingBarProgress} />
           }
         />
-
         <Route
-          path="/users"
-          element={<UserPage setLoadingBarProgress={setLoadingBarProgress} />}
+          path="/comments"
+          element={
+            <CommentPage setLoadingBarProgress={setLoadingBarProgress} />
+          }
         />
-
         <Route
           path="/payments"
           element={
             <PaymentPage setLoadingBarProgress={setLoadingBarProgress} />
           }
         />
+        <Route path="*" element={<NotFoundPage />} />
       </>
     );
   } else {
