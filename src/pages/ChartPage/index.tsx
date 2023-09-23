@@ -39,7 +39,7 @@ const ChartPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
   }, []);
 
   const {
-    data: orders,
+    data: orderData,
     isLoading,
     isError,
   } = useQuery(["orders"], () => orderService.fetchAllOrders(), {
@@ -47,21 +47,43 @@ const ChartPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
     retryDelay: 1000,
   });
 
-  // Calculate total sales only if data is available
-  const totalSales = orders?.reduce(
-    (total: number, order: any) => total + parseFloat(order.totalPrice),
-    0
-  );
+  const groupOrdersByDay = (orders: any) => {
+    const groupedData = orders.reduce((result: any, order: any) => {
+      const date = new Date(order.createdAt).toLocaleDateString(); // Convert createdAt to a date string
+      if (!result[date]) {
+        result[date] = { totalSales: 0, orderCount: 0 };
+      }
+      result[date].totalSales += parseFloat(order.totalPrice);
+      result[date].orderCount++;
+      return result;
+    }, {});
+    return groupedData;
+  };
+
+  const groupedData = groupOrdersByDay(orderData);
+
+  //  dữ liệu tổng doanh số và dữ liệu số lượng đơn hàng
+  const labels = Object.keys(groupedData);
+//   console.log(groupedData)
+  const totalSalesData = labels.map((date) => groupedData[date].totalSales);
+  const orderCountData = labels.map((date) => groupedData[date].orderCount);
 
   const orderOption = {
-    labels: ["Total Sales"],
+    labels: labels,
     datasets: [
       {
         label: "Total Sales",
-        data: [totalSales || 0], // Default to 0 if totalSales is undefined
-        backgroundColor: "rgba(75, 192, 192, 0.2)", // Bar color
-        borderColor: "rgba(75, 192, 192, 1)", // Bar border color
-        borderWidth: 1, // Bar border width
+        data: totalSalesData,
+        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        borderColor: "rgba(75, 192, 192, 1)",
+        borderWidth: 1,
+      },
+      {
+        label: "Order Count",
+        data: orderCountData,
+        backgroundColor: "rgba(255, 99, 132, 0.2)",
+        borderColor: "rgba(255, 99, 132, 1)",
+        borderWidth: 1,
       },
     ],
   };
@@ -69,7 +91,7 @@ const ChartPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
   const options: any = {
     scales: {
       x: {
-        type: "category", // Use the category scale for x-axis
+        type: "category",
       },
       y: {
         beginAtZero: true,
