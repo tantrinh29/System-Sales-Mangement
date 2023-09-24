@@ -55,6 +55,7 @@ const BannerPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isDataEdit, setDataEdit] = useState<any>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [searchText, setSearchText] = useState<any>("");
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isImageRequired, setIsImageRequired] = useState<any>();
   const [fileList, setFileList] = useState<any>();
@@ -68,6 +69,14 @@ const BannerPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
       retryDelay: 1000,
     }
   );
+
+  // search data
+
+  const filtered = searchText
+    ? isBanner.filter((huydev: any) =>
+        huydev.nameImage.toLowerCase().includes(searchText.toLowerCase())
+      )
+    : isBanner;
 
   const handleAdd = () => {
     setFileList("");
@@ -239,7 +248,7 @@ const BannerPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
     setIsImageUpdateAllowed(true);
   }, [isDataEdit]);
 
-  const transformedData = transformDataWithKey(isBanner); // custom id to key
+  const transformedData = transformDataWithKey(filtered); // custom id to key
 
   const updateBlogMutation = useMutation((data) =>
     bannerService.fetchUpdateBanner(isDataEdit._id, data)
@@ -342,7 +351,19 @@ const BannerPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
               : ""}
           </span>
         </div>
-        <div style={{ marginBottom: 16 }}>
+        <div className="flex gap-2" style={{ marginBottom: 16 }}>
+          <div>
+            <input
+              type="text"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
+            focus:ring-blue-500 focus:border-blue-500 block w-full pl-3 p-1.5
+              dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Search..."
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              required
+            />
+          </div>
           <Button className="bg-blue-500" type="primary" onClick={handleAdd}>
             ADD
           </Button>

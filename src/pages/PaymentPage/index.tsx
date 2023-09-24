@@ -1,13 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Form,
-  Input,
-  Popconfirm,
-  Select,
-  Table,
-  message,
-} from "antd";
+import { Button, Form, Input, Popconfirm, Select, Table, message } from "antd";
 import Layout from "../../components/Layout";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { ColumnsType } from "antd/es/table";
@@ -47,6 +39,7 @@ const PaymentPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [isDataEdit, setDataEdit] = useState<any>([]);
+  const [searchText, setSearchText] = useState<any>("");
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
@@ -215,8 +208,12 @@ const PaymentPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
       retryDelay: 1000,
     }
   );
-
-  const transformedData = transformDataWithKey(isPayment); // custom id to key
+  const filtered = searchText
+    ? isPayment.filter((huydev: any) =>
+        huydev.namePayment.toLowerCase().includes(searchText.toLowerCase())
+      )
+    : isPayment;
+  const transformedData = transformDataWithKey(filtered); // custom id to key
 
   const updatePaymentMutation = useMutation((data) =>
     paymentService.fetchUpdatePayment(isDataEdit._id, data)
@@ -267,7 +264,19 @@ const PaymentPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
               : ""}
           </span>
         </div>
-        <div style={{ marginBottom: 16 }}>
+        <div className="flex gap-2" style={{ marginBottom: 16 }}>
+          <div>
+            <input
+              type="text"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
+            focus:ring-blue-500 focus:border-blue-500 block w-full pl-3 p-1.5
+              dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Search..."
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              required
+            />
+          </div>
           <Button className="bg-blue-500" type="primary" onClick={handleAdd}>
             ADD
           </Button>

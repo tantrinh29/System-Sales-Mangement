@@ -58,6 +58,7 @@ const CategoryPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isDataEdit, setDataEdit] = useState<any>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [searchText, setSearchText] = useState<any>("");
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isImageRequired, setIsImageRequired] = useState<any>();
   const [fileList, setFileList] = useState<any>();
@@ -147,8 +148,6 @@ const CategoryPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
       title: "NAME",
       dataIndex: "nameCategory",
       sorter: true,
-      onFilter: (value: any, record: DataType) =>
-        record.nameCategory.indexOf(value) === 0,
     },
     {
       title: "IMAGE",
@@ -268,6 +267,16 @@ const CategoryPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
     }
   );
 
+  // search data
+
+  const filtered = searchText
+    ? isCategory.filter((huydev: any) =>
+        huydev.nameCategory.toLowerCase().includes(searchText.toLowerCase())
+      )
+    : isCategory;
+
+  // Edit value
+
   useEffect(() => {
     if (isDataEdit?.imageCategory) {
       setFileList(isDataEdit.imageCategory);
@@ -276,7 +285,7 @@ const CategoryPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
     setIsImageUpdateAllowed(true);
   }, [isDataEdit]);
 
-  const transformedData = transformDataWithKey(isCategory); // custom id to key
+  const transformedData = transformDataWithKey(filtered); // custom id to key
 
   const updateCategoryMutation = useMutation((data) =>
     categoryService.fetchUpdateCategory(isDataEdit.slugCategory, data)
@@ -380,7 +389,19 @@ const CategoryPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
               : ""}
           </span>
         </div>
-        <div style={{ marginBottom: 16 }}>
+        <div className="flex gap-2" style={{ marginBottom: 16 }}>
+          <div>
+            <input
+              type="text"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
+               focus:ring-blue-500 focus:border-blue-500 block w-full pl-3 p-1.5
+                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Search..."
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              required
+            />
+          </div>
           <Button className="bg-blue-500" type="primary" onClick={handleAdd}>
             ADD
           </Button>

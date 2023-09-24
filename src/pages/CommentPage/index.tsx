@@ -36,7 +36,7 @@ const CommentPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
   }, []);
   const queryClient = useQueryClient();
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-
+  const [searchText, setSearchText] = useState<any>("");
   const deleteCommentMutation = useMutation(
     (data) => commentService.fetchDeleteComment(data),
     {
@@ -166,8 +166,13 @@ const CommentPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
       retryDelay: 1000,
     }
   );
+  const filtered = searchText
+    ? isComment.filter((huydev: any) =>
+        huydev.user.fullname.toLowerCase().includes(searchText.toLowerCase())
+      )
+    : isComment;
 
-  const transformedData = transformDataWithKey(isComment); // custom id to key
+  const transformedData = transformDataWithKey(filtered); // custom id to key
 
   return (
     <Layout>
@@ -185,6 +190,20 @@ const CommentPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
               ? `Selected delete ${selectedRowKeys.length} items`
               : ""}
           </span>
+        </div>
+        <div className="flex gap-2" style={{ marginBottom: 16 }}>
+          <div>
+            <input
+              type="text"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
+            focus:ring-blue-500 focus:border-blue-500 block w-full pl-3 p-1.5
+              dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Search..."
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              required
+            />
+          </div>
         </div>
       </div>
       <Table

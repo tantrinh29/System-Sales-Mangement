@@ -61,6 +61,7 @@ const PromotionPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isDataEdit, setDataEdit] = useState<any>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [searchText, setSearchText] = useState<any>("");
   const [editorContent, setEditorContent] = useState<any>();
   const [editorDescription, setEditorDescription] = useState<any>();
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -76,6 +77,12 @@ const PromotionPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
       retryDelay: 1000,
     }
   );
+
+  const filtered = searchText
+    ? isPromotion.filter((huydev: any) =>
+        huydev.titlePromotion.toLowerCase().includes(searchText.toLowerCase())
+      )
+    : isPromotion;
 
   const handleAdd = () => {
     setEditorContent(""); // Reset CKEditor content
@@ -270,7 +277,7 @@ const PromotionPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
     setIsImageUpdateAllowed(true);
   }, [isDataEdit]);
 
-  const transformedData = transformDataWithKey(isPromotion); // custom id to key
+  const transformedData = transformDataWithKey(filtered); // custom id to key
 
   const updatePromotionMutation = useMutation((data) =>
     promotionService.fetchUpdatePromotion(isDataEdit.slugPromotion, data)
@@ -375,7 +382,19 @@ const PromotionPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
               : ""}
           </span>
         </div>
-        <div style={{ marginBottom: 16 }}>
+        <div className="flex gap-2" style={{ marginBottom: 16 }}>
+          <div>
+            <input
+              type="text"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
+            focus:ring-blue-500 focus:border-blue-500 block w-full pl-3 p-1.5
+              dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Search..."
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              required
+            />
+          </div>
           <Button className="bg-blue-500" type="primary" onClick={handleAdd}>
             ADD
           </Button>
@@ -442,7 +461,7 @@ const PromotionPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
                 <Input size={SIZEFORM} placeholder="Author ..." />
               </Form.Item>
             </div>
-            
+
             <div>
               <Form.Item
                 label="Content"
@@ -493,53 +512,53 @@ const PromotionPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
             </div>
           </div>
           <div>
-              <Form.Item
-                label="* Image"
-                name="imagePromotion"
-                style={{
-                  marginBottom: 0,
-                }}
-                rules={[
-                  {
-                    validator: validateFileList,
-                  },
-                ]}
+            <Form.Item
+              label="* Image"
+              name="imagePromotion"
+              style={{
+                marginBottom: 0,
+              }}
+              rules={[
+                {
+                  validator: validateFileList,
+                },
+              ]}
+            >
+              <Upload
+                listType="picture"
+                onChange={handleImageChange}
+                onRemove={handleRemove}
+                accept=".jpg,.png"
+                multiple={false} // Chỉ cho phép tải lên 1 ảnh
+                showUploadList={false}
               >
-                <Upload
-                  listType="picture"
-                  onChange={handleImageChange}
-                  onRemove={handleRemove}
-                  accept=".jpg,.png"
-                  multiple={false} // Chỉ cho phép tải lên 1 ảnh
-                  showUploadList={false}
-                >
-                  {fileList ? null : <Button size={SIZEFORM}>Upload</Button>}
-                </Upload>
-                {fileList ? (
-                  <>
-                    <img
-                      className="mt-4"
-                      width={100}
-                      src={fileList.length ? fileList : fileList.preview}
-                      alt=""
-                    />
-                    <Button
-                      icon={<DeleteOutlined />}
-                      size="small"
-                      onClick={() => handleRemove()}
-                    />
-                  </>
-                ) : (
-                  <Empty
-                    className="text-center"
-                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                {fileList ? null : <Button size={SIZEFORM}>Upload</Button>}
+              </Upload>
+              {fileList ? (
+                <>
+                  <img
+                    className="mt-4"
+                    width={100}
+                    src={fileList.length ? fileList : fileList.preview}
+                    alt=""
                   />
-                )}
-                {isImageRequired && (
-                  <div className="text-red-500">* Images is required</div>
-                )}
-              </Form.Item>
-            </div>
+                  <Button
+                    icon={<DeleteOutlined />}
+                    size="small"
+                    onClick={() => handleRemove()}
+                  />
+                </>
+              ) : (
+                <Empty
+                  className="text-center"
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                />
+              )}
+              {isImageRequired && (
+                <div className="text-red-500">* Images is required</div>
+              )}
+            </Form.Item>
+          </div>
         </Form>
       </ModalForm>
     </Layout>

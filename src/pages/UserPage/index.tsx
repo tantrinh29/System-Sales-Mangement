@@ -28,6 +28,7 @@ const UserPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isDataEdit, setDataEdit] = useState<any>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [searchText, setSearchText] = useState<any>("");
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
   const handleEdit = (data: any) => {
@@ -207,8 +208,12 @@ const UserPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
       retryDelay: 1000,
     }
   );
-
-  const transformedData = transformDataWithKey(isUser); // custom id to key
+  const filtered = searchText
+    ? isUser.filter((huydev: any) =>
+        huydev.fullname.toLowerCase().includes(searchText.toLowerCase())
+      )
+    : isUser;
+  const transformedData = transformDataWithKey(filtered); // custom id to key
 
   const updateUserMutation = useMutation((data) =>
     userService.fetchUpdateUser(isDataEdit._id, data)
@@ -247,6 +252,18 @@ const UserPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
               ? `Selected delete ${selectedRowKeys.length} items`
               : ""}
           </span>
+        </div>
+        <div>
+          <input
+            type="text"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
+            focus:ring-blue-500 focus:border-blue-500 block w-full pl-3 p-1.5
+              dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="Search..."
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            required
+          />
         </div>
       </div>
       <Table

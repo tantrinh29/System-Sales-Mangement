@@ -41,6 +41,7 @@ const BrandPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isDataEdit, setDataEdit] = useState<any>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [searchText, setSearchText] = useState<any>("");
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
   const handleAdd = () => {
@@ -115,7 +116,7 @@ const BrandPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
       onFilter: (value: any, record: DataType) =>
         record.nameBrand.indexOf(value) === 0,
     },
-    
+
     {
       title: "CATEGORY",
       sorter: true,
@@ -196,7 +197,13 @@ const BrandPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
     }
   );
 
-  const transformedData = transformDataWithKey(isBrand); // custom id to key
+  const filtered = searchText
+    ? isBrand.filter((huydev: any) =>
+        huydev.nameBrand.toLowerCase().includes(searchText.toLowerCase())
+      )
+    : isBrand;
+
+  const transformedData = transformDataWithKey(filtered); // custom id to key
 
   const { data: isCategory } = useQuery(
     ["categories"],
@@ -215,7 +222,7 @@ const BrandPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
   );
 
   const onFinish = async (data: any) => {
-    console.log(data)
+    console.log(data);
     try {
       if (isEditing) {
         const response = await updateBrandMutation.mutateAsync(data);
@@ -257,7 +264,19 @@ const BrandPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
               : ""}
           </span>
         </div>
-        <div style={{ marginBottom: 16 }}>
+        <div className="flex gap-2" style={{ marginBottom: 16 }}>
+          <div>
+            <input
+              type="text"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
+            focus:ring-blue-500 focus:border-blue-500 block w-full pl-3 p-1.5
+              dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Search..."
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              required
+            />
+          </div>
           <Button className="bg-blue-500" type="primary" onClick={handleAdd}>
             ADD
           </Button>

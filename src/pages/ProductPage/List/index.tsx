@@ -41,6 +41,7 @@ const ListProduct: React.FC<Props> = ({ setLoadingBarProgress }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedImages, setSelectedImages] = useState<any>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [searchText, setSearchText] = useState<any>("");
 
   const handleOpenModal = (data: any) => {
     setSelectedImages(data.images);
@@ -129,9 +130,7 @@ const ListProduct: React.FC<Props> = ({ setLoadingBarProgress }) => {
         if (record) {
           return (
             <img
-              src={
-                record.images ? record.images[0].imagePath : null
-              }
+              src={record.images ? record.images[0].imagePath : null}
               alt={`Product ${index}`}
               style={{ width: "100px", cursor: "pointer" }}
               onClick={() => handleOpenModal(record)}
@@ -146,9 +145,7 @@ const ListProduct: React.FC<Props> = ({ setLoadingBarProgress }) => {
       title: "COLOR",
       key: "colors",
       render: (record: any) => (
-        <ColorCell
-          values={record.colors ? record.colors : null}
-        />
+        <ColorCell values={record.colors ? record.colors : null} />
       ),
     },
     {
@@ -173,7 +170,7 @@ const ListProduct: React.FC<Props> = ({ setLoadingBarProgress }) => {
     {
       title: "PRICE DROPPED",
       sorter: (a, b) => a.price_has_dropped - b.price_has_dropped,
-      render: (record:DataType) => (
+      render: (record: DataType) => (
         <span className="font-medium">
           {parseInt(record.price_has_dropped).toLocaleString()} VND
         </span>
@@ -192,7 +189,8 @@ const ListProduct: React.FC<Props> = ({ setLoadingBarProgress }) => {
           value: "stocking",
         },
       ],
-      onFilter: (value: any, record: DataType) => record.statusProduct === value,
+      onFilter: (value: any, record: DataType) =>
+        record.statusProduct === value,
       render: (record: DataType) => (
         <div
           className={`${
@@ -252,8 +250,12 @@ const ListProduct: React.FC<Props> = ({ setLoadingBarProgress }) => {
       retryDelay: 1000,
     }
   );
-
-  const transformedData = transformDataWithKey(isProduct); // custom id to key
+  const filtered = searchText
+    ? isProduct.filter((huydev: any) =>
+        huydev.nameProduct.toLowerCase().includes(searchText.toLowerCase())
+      )
+    : isProduct;
+  const transformedData = transformDataWithKey(filtered); // custom id to key
   return (
     <Layout>
       <div className="flex justify-between">
@@ -271,10 +273,22 @@ const ListProduct: React.FC<Props> = ({ setLoadingBarProgress }) => {
             {hasSelected ? `Selected ${selectedRowKeys.length} items` : ""}
           </span>
         </div>
-        <div style={{ marginBottom: 16 }}>
+        <div className="flex gap-2" style={{ marginBottom: 16 }}>
+          <div>
+            <input
+              type="text"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
+            focus:ring-blue-500 focus:border-blue-500 block w-full pl-3 p-1.5
+              dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Search..."
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              required
+            />
+          </div>
           <Link
             to={"/product/add"}
-            className="bg-blue-500 px-4 py-2 text-white rounded-lg"
+            className="bg-blue-500 px-4 p-1.5 text-white rounded-lg"
             type="primary"
           >
             ADD
