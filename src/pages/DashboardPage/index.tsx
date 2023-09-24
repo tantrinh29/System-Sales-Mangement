@@ -11,11 +11,17 @@ import { useSelector } from "react-redux";
 import { AppState } from "../../store";
 import { AuthenticatedUser } from "../../types";
 import { chatService } from "../../services/chat.service";
-import { CUSTOM_ENV, RANDOM, chatTime } from "../../utils/custom.env";
+import { CUSTOM_ENV, RANDOM } from "../../utils/custom.env";
 
 type Props = {
   setLoadingBarProgress: any;
 };
+
+ const chatTime = (dateString: any) => {
+  const date = new Date(dateString);
+  return date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+};
+
 
 const Home: React.FC<Props> = ({ setLoadingBarProgress }) => {
   useEffect(() => {
