@@ -11,7 +11,8 @@ import { useSelector } from "react-redux";
 import { AppState } from "../../store";
 import { AuthenticatedUser } from "../../types";
 import { chatService } from "../../services/chat.service";
-import { CUSTOM_ENV, RANDOM, formattedTimeChat } from "../../utils/custom.env";
+import { CUSTOM_ENV, RANDOM } from "../../utils/custom.env";
+import { formattedTimeChat } from "../../utils/custom.env";
 
 type Props = {
   setLoadingBarProgress: any;
