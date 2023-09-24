@@ -11,8 +11,7 @@ import { useSelector } from "react-redux";
 import { AppState } from "../../store";
 import { AuthenticatedUser } from "../../types";
 import { chatService } from "../../services/chat.service";
-import { CUSTOM_ENV, RANDOM } from "../../utils/custom.env";
-import { formattedTimeChat } from "../../utils/custom.env";
+import { CUSTOM_ENV, RANDOM, chatTime } from "../../utils/custom.env";
 
 type Props = {
   setLoadingBarProgress: any;
@@ -348,7 +347,7 @@ const Home: React.FC<Props> = ({ setLoadingBarProgress }) => {
                           {messageContent.author}
                         </div>
                         <div className="text-xs text-gray-400">
-                          {formattedTimeChat(messageContent.createdAt)}
+                          {chatTime(messageContent.createdAt)}
                         </div>
                       </div>
                       <div className="text-sm w-fit overflow-hidden bg-sky-500 text-white rounded-full py-2 px-3">
