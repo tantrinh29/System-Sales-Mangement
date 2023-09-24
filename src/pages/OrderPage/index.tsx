@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Button, Table } from "antd";
+import { Button, Form, Select, Table } from "antd";
 import { useQuery } from "@tanstack/react-query";
 import type { ColumnsType } from "antd/es/table";
 import {
   RANDOM,
+  SIZEFORM,
   formatTime,
   transformDataWithKey,
 } from "../../utils/custom.env";
 import { orderService } from "../../services/order.service";
 import Layout from "../../components/Layout";
 import ModalDetailOrder from "../../components/Modal";
+import ModalForm from "../../components/Modal";
 
 interface DataType {
   _id: any;
@@ -36,9 +38,11 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
     }, RANDOM.timeout);
   }, []);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
   const [isDetailProduct, setIsDetailProduct] = useState<any>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [isDataEdit, setDataEdit] = useState<any>([]);
 
   const handleOpenModal = (data: DataType) => {
     setIsDetailProduct(data.products);
@@ -147,19 +151,19 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
       key: "action",
       render: (record: DataType) => (
         <>
-        <button
-          onClick={() => handleOpenModal(record)}
-          className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-        >
-          Update
-        </button>
-        {" "} {" / "} {" "}
-        <button
-          onClick={() => handleOpenModal(record)}
-          className="font-medium text-red-600 dark:text-blue-500 hover:underline"
-        >
-          Chi Tiết
-        </button>
+          <button
+            onClick={() => handleOpenModal(record)}
+            className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+          >
+            Update
+          </button>{" "}
+          {" / "}{" "}
+          <button
+            onClick={() => handleOpenModal(record)}
+            className="font-medium text-red-600 dark:text-blue-500 hover:underline"
+          >
+            Chi Tiết
+          </button>
         </>
       ),
     },
@@ -293,6 +297,53 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
           rowKey="id"
         />
       </ModalDetailOrder>
+
+      <ModalForm
+        title={isEditing ? "Edit Order" : "Add Order"}
+        loading={loading}
+        open={modalVisible}
+        onClose={handleCloseModal}
+        onOke={handleOke}
+        width={700}
+        footer={[
+          <Button key="cancel" onClick={handleCloseModal}>
+            Cancel
+          </Button>,
+          <Button
+            key="ok"
+            type="primary"
+            style={{ background: "#1677ff" }}
+            onClick={() => form.submit()}
+            loading={loading}
+          >
+            {isEditing ? "Update" : "Add"}
+          </Button>,
+        ]}
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          autoComplete="off"
+          onFinish={onFinish}
+        >
+          <div className="grid gap-4">
+            <Form.Item
+              label="Role"
+              name="role"
+              style={{
+                marginBottom: 0,
+              }}
+              rules={[{ required: true, message: "* Status is required" }]}
+            >
+              <Select size={SIZEFORM} placeholder="Role">
+                <Select.Option value="Chờ Thanh Toán">Chờ Thanh Toán</Select.Option>
+                <Select.Option value="Đã Hoàn Thành">Đã Hoàn Thành</Select.Option>
+                <Select.Option value="Chờ Giao Hàng">Chờ Giao Hàng</Select.Option>
+              </Select>
+            </Form.Item>
+          </div>
+        </Form>
+      </ModalForm>
     </Layout>
   );
 };
