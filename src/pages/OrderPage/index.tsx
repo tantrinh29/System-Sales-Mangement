@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Button, Form, Select, Table } from "antd";
-import { useQuery } from "@tanstack/react-query";
+import { Button, Form, Select, Table, message } from "antd";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { ColumnsType } from "antd/es/table";
 import {
   RANDOM,
@@ -10,8 +10,8 @@ import {
 } from "../../utils/custom.env";
 import { orderService } from "../../services/order.service";
 import Layout from "../../components/Layout";
-import ModalDetailOrder from "../../components/Modal";
 import ModalForm from "../../components/Modal";
+import { Link } from "react-router-dom";
 
 interface DataType {
   _id: any;
@@ -37,24 +37,47 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
       setLoadingBarProgress(100);
     }, RANDOM.timeout);
   }, []);
+  const queryClient = useQueryClient();
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
-  const [isDetailProduct, setIsDetailProduct] = useState<any>([]);
+  // const [isDetailProduct, setIsDetailProduct] = useState<any>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isDataEdit, setDataEdit] = useState<any>([]);
 
-  const handleOpenModal = (data: DataType) => {
-    setIsDetailProduct(data.products);
+  // const handleOpenModal = (data: DataType) => {
+  //   setIsDetailProduct(data.products);
+  //   setModalVisible(true);
+  // };
+
+  // const handleCloseModal = () => {
+  //   setModalVisible(false);
+  //   setIsDetailProduct([]);
+  // };
+
+  // const handleOke = () => {
+  //   setLoading(true);
+  //   setTimeout(() => {
+  //     setLoading(false);
+  //     setModalVisible(false);
+  //   }, 1000);
+  // };
+
+  const handleEdit = (data: any) => {
+    setDataEdit(data);
+    setIsEditing(true);
     setModalVisible(true);
   };
 
   const handleCloseModal = () => {
     setModalVisible(false);
-    setIsDetailProduct([]);
+    setIsEditing(false);
+    form.resetFields();
   };
 
   const handleOke = () => {
+    form.submit();
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
@@ -152,18 +175,18 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
       render: (record: DataType) => (
         <>
           <button
-            onClick={() => handleOpenModal(record)}
+            onClick={() => handleEdit(record)}
             className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
           >
             Update
           </button>{" "}
           {" / "}{" "}
-          <button
-            onClick={() => handleOpenModal(record)}
+          <Link
+            to={"/"}
             className="font-medium text-red-600 dark:text-blue-500 hover:underline"
           >
             Chi Tiết
-          </button>
+          </Link>
         </>
       ),
     },
@@ -178,6 +201,16 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
   //   // console.log("params", pagination, filters, sorter, extra);
   // };
 
+  useEffect(() => {
+    if (isEditing) {
+      form.setFieldsValue({
+        status: isDataEdit.status,
+      });
+    } else {
+      form.validateFields();
+    }
+  }, [isEditing, isDataEdit, form]);
+
   const { data: isOrder, isLoading } = useQuery(
     ["orders"],
     () => orderService.fetchAllOrders(),
@@ -189,64 +222,85 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
 
   const transformedData = transformDataWithKey(isOrder); // custom id to key
 
-  const detailOrder = [
-    {
-      title: "IMAGE",
-      render: (record: any) => (
-        <img
-          src={record.images[0].imagePath}
-          alt="Product"
-          style={{ width: "150px" }}
-        />
-      ),
-    },
-    {
-      title: "COLOR",
-      dataIndex: "color",
-      filters: [
-        {
-          text: "Black",
-          value: "black",
-        },
-        {
-          text: "Red",
-          value: "red",
-        },
-      ],
-      onFilter: (value: any, record: any) => record.colors.indexOf(value) === 0,
-      render: (record: any) => (
-        <span
-          className={`inline-block bg-blue-500 text-white text-xs py-1 px-2 rounded-full mr-1`}
-          style={{
-            textTransform: "uppercase",
-            fontWeight: "600",
-          }}
-        >
-          {record}
-        </span>
-      ),
-    },
-    {
-      title: "QUANTITY",
-      dataIndex: "quantity",
-      sorter: (a: any, b: any) => a.quantity - b.quantity,
-    },
-    {
-      title: "PRICE",
-      sorter: (a: any, b: any) => a.price - b.price,
-      render: (record: any) => (
-        <span>
-          {(record.huydev.price_has_dropped * record.quantity).toLocaleString(
-            "vi-VN"
-          )}{" "}
-          VND
-        </span>
-      ),
-    },
-  ];
+  // const detailOrder = [
+  //   {
+  //     title: "IMAGE",
+  //     render: (record: any) => (
+  //       <img
+  //         src={record.images[0].imagePath}
+  //         alt="Product"
+  //         style={{ width: "150px" }}
+  //       />
+  //     ),
+  //   },
+  //   {
+  //     title: "COLOR",
+  //     dataIndex: "color",
+  //     filters: [
+  //       {
+  //         text: "Black",
+  //         value: "black",
+  //       },
+  //       {
+  //         text: "Red",
+  //         value: "red",
+  //       },
+  //     ],
+  //     onFilter: (value: any, record: any) => record.colors.indexOf(value) === 0,
+  //     render: (record: any) => (
+  //       <span
+  //         className={`inline-block bg-blue-500 text-white text-xs py-1 px-2 rounded-full mr-1`}
+  //         style={{
+  //           textTransform: "uppercase",
+  //           fontWeight: "600",
+  //         }}
+  //       >
+  //         {record}
+  //       </span>
+  //     ),
+  //   },
+  //   {
+  //     title: "QUANTITY",
+  //     dataIndex: "quantity",
+  //     sorter: (a: any, b: any) => a.quantity - b.quantity,
+  //   },
+  //   {
+  //     title: "PRICE",
+  //     sorter: (a: any, b: any) => a.price - b.price,
+  //     render: (record: any) => (
+  //       <span>
+  //         {(record.huydev.price_has_dropped * record.quantity).toLocaleString(
+  //           "vi-VN"
+  //         )}{" "}
+  //         VND
+  //       </span>
+  //     ),
+  //   },
+  // ];
 
-  const getFirstImageURL = (images: any) => {
-    return images.length > 0 ? images : null;
+  // const getFirstImageURL = (images: any) => {
+  //   return images.length > 0 ? images : null;
+  // };
+
+  const updateUserMutation = useMutation((data) =>
+    orderService.fetchUpdateOrder(isDataEdit._id, data)
+  );
+
+  const onFinish = async (data: any) => {
+    try {
+      const response = await updateUserMutation.mutateAsync(data);
+      if (response.status === true) {
+        message.success(`${response.message}`);
+      } else {
+        message.error(`${response.message}`);
+      }
+
+      form.resetFields();
+      setModalVisible(false);
+      queryClient.invalidateQueries(["orders"]);
+    } catch (error) {
+      console.error(error);
+    }
   };
   return (
     <Layout>
@@ -273,7 +327,7 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
         dataSource={transformedData}
         size={"small"}
       />
-      <ModalDetailOrder
+      {/* <ModalDetailOrder
         title="Chi Tiết Sản Phẩm"
         loading={loading}
         open={modalVisible}
@@ -296,7 +350,7 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
           }))}
           rowKey="id"
         />
-      </ModalDetailOrder>
+      </ModalDetailOrder> */}
 
       <ModalForm
         title={isEditing ? "Edit Order" : "Add Order"}
@@ -328,17 +382,23 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
         >
           <div className="grid gap-4">
             <Form.Item
-              label="Role"
-              name="role"
+              label="Trạng Thái Đơn Hàng"
+              name="status"
               style={{
                 marginBottom: 0,
               }}
               rules={[{ required: true, message: "* Status is required" }]}
             >
-              <Select size={SIZEFORM} placeholder="Role">
-                <Select.Option value="Chờ Thanh Toán">Chờ Thanh Toán</Select.Option>
-                <Select.Option value="Đã Hoàn Thành">Đã Hoàn Thành</Select.Option>
-                <Select.Option value="Chờ Giao Hàng">Chờ Giao Hàng</Select.Option>
+              <Select size={SIZEFORM} placeholder="Trạng Thái Đơn Hàng">
+                <Select.Option value="Chờ Thanh Toán">
+                  Chờ Thanh Toán
+                </Select.Option>
+                <Select.Option value="Đã Hoàn Thành">
+                  Đã Hoàn Thành
+                </Select.Option>
+                <Select.Option value="Chờ Giao Hàng">
+                  Chờ Giao Hàng
+                </Select.Option>
               </Select>
             </Form.Item>
           </div>
