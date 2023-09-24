@@ -28,66 +28,6 @@ function App() {
       const socketEventHandlers = [
         { event: "message", action: (message: any) => console.log(message) },
         {
-          event: "created_brand",
-          action: (message: any) => handleSocketEvent(message),
-        },
-        {
-          event: "updated_brand",
-          action: (message: any) => handleSocketEvent(message),
-        },
-        {
-          event: "deleted_brand",
-          action: (message: any) => handleSocketEvent(message),
-        },
-        {
-          event: "created_product",
-          action: (message: any) => handleSocketEvent(message),
-        },
-        {
-          event: "updated_product",
-          action: (message: any) => handleSocketEvent(message),
-        },
-        {
-          event: "deleted_product",
-          action: (message: any) => handleSocketEvent(message),
-        },
-        {
-          event: "created_category",
-          action: (message: any) => handleSocketEvent(message),
-        },
-        {
-          event: "updated_category",
-          action: (message: any) => handleSocketEvent(message),
-        },
-        {
-          event: "deleted_category",
-          action: (message: any) => handleSocketEvent(message),
-        },
-        {
-          event: "created_coupon",
-          action: (message: any) => handleSocketEvent(message),
-        },
-        {
-          event: "updated_coupon",
-          action: (message: any) => handleSocketEvent(message),
-        },
-        {
-          event: "deleted_coupon",
-          action: (message: any) => handleSocketEvent(message),
-        },
-        {
-          event: "created_blog",
-          action: (message: any) => handleSocketEvent(message),
-        },
-        {
-          event: "updated_blog",
-          action: (message: any) => handleSocketEvent(message),
-        },
-        {
-          event: "deleted_blog",
-          action: (message: any) => handleSocketEvent(message),
-        },
-        {
           event: "created_order",
           action: (message: any) => handleSocketEvent(message),
         },
@@ -96,7 +36,7 @@ function App() {
           action: (message: any) => handleSocketEvent(message),
         },
         {
-          event: "deleted_order",
+          event: "check_quantity_product",
           action: (message: any) => handleSocketEvent(message),
         },
         {
