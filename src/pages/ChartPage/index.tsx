@@ -15,7 +15,7 @@ import { RANDOM } from "../../utils/custom.env";
 import { useQuery } from "@tanstack/react-query";
 import { orderService } from "../../services/order.service";
 import Loading from "../../components/Loading";
-import PdfExport from "../../components/PdfReport/PdfExport";
+import PdfExport from "../../components/PdfExport";
 
 ChartJS.register(
   CategoryScale,
