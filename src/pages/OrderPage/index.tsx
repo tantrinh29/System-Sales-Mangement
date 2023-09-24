@@ -146,12 +146,21 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
       title: "ACTION",
       key: "action",
       render: (record: DataType) => (
+        <>
         <button
           onClick={() => handleOpenModal(record)}
           className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
         >
+          Update
+        </button>
+        {" "} {" / "} {" "}
+        <button
+          onClick={() => handleOpenModal(record)}
+          className="font-medium text-red-600 dark:text-blue-500 hover:underline"
+        >
           Chi Tiết
         </button>
+        </>
       ),
     },
   ];

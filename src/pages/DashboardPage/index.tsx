@@ -4,7 +4,6 @@ import { productService } from "../../services/product.service";
 import { categoryService } from "../../services/category.service";
 import { userService } from "../../services/user.service";
 import { orderService } from "../../services/order.service";
-import { CUSTOM_ENV, RANDOM, formattedTimeChat } from "../../utils/custom.env";
 import Layout from "../../components/Layout";
 import Loading from "../../components/Loading";
 import { io } from "socket.io-client";
@@ -12,6 +11,7 @@ import { useSelector } from "react-redux";
 import { AppState } from "../../store";
 import { AuthenticatedUser } from "../../types";
 import { chatService } from "../../services/chat.service";
+import { CUSTOM_ENV, RANDOM, formattedTimeChat } from "../../utils/custom.env";
 
 type Props = {
   setLoadingBarProgress: any;
