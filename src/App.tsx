@@ -104,6 +104,10 @@ function App() {
           action: (message: any) => handleSocketEvent(message),
         },
         {
+          event: "fotgot_password",
+          action: (message: any) => handleSocketEvent(message),
+        },
+        {
           event: "created_user",
           action: (message: any) => handleSocketEvent(message),
         },
