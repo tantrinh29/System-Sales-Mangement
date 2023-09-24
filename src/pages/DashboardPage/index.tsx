@@ -206,9 +206,9 @@ const Home: React.FC<Props> = ({ setLoadingBarProgress }) => {
           </div>
         </div>
       </div>
-      <div className="h-full" style={{ height: "100vh" }}>
+      <div className="h-full" style={{ height: "100%" }}>
         <div className="h-full flex flex-col">
-          <div className="bg-white w-full  flex  border-b-[1px]  sm:px-4  py-3  px-4  lg:px-6  justify-between  items-center  shadow-sm">
+          <div className="bg-white w-full  flex  border-b-[1px]  sm:px-4  py-3  px-4  lg:px-6  justify-between  items-center">
             <div className="flex gap-3 items-center">
               <a
                 className="lg:hidden block text-sky-500 hover:text-sky-600 transition cursor-pointer "
@@ -248,7 +248,7 @@ const Home: React.FC<Props> = ({ setLoadingBarProgress }) => {
                     decoding="async"
                     data-nimg="fill"
                     sizes="100vw"
-                    src={`https://ui-avatars.com/api/name=huydev`}
+                    src={`https://ui-avatars.com/api/name=${user.username}`}
                     style={{
                       position: "absolute",
                       borderRadius: "100%",
@@ -262,7 +262,7 @@ const Home: React.FC<Props> = ({ setLoadingBarProgress }) => {
               </div>
 
               <div className="flex flex-col">
-                <div>Messages</div>
+                <div>Chat Support</div>
                 <div className=" text-sm  font-light text-neutral-500 ">
                   Online
                 </div>

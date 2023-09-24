@@ -170,7 +170,7 @@ export default function Header() {
                   </p>
                 </div>
 
-                {notifications.length < 0 ? (
+                {notifications.length === 0 ? (
                   <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
                 ) : (
                   notificationElements
