@@ -37,9 +37,14 @@ export default function Header() {
     setIsDropdown(false);
   };
 
-  const notificationElements: JSX.Element[] = notifications.map(
-    (item: INotification) => {
-      return (
+  const notificationElements: JSX.Element[] = [];
+  const uniqueIds = new Set();
+
+  notifications.forEach((item: INotification) => {
+    // Kiểm tra xem id của item đã xuất hiện chưa
+    if (!uniqueIds.has(item.id)) {
+      uniqueIds.add(item.id); // Thêm id vào Set để đánh dấu đã xuất hiện
+      notificationElements.push(
         <div
           id="toast-warning"
           key={item.id}
@@ -63,7 +68,7 @@ export default function Header() {
         </div>
       );
     }
-  );
+  });
 
   return (
     <header className="sticky top-0 inset-x-0 flex flex-wrap sm:justify-start sm:flex-nowrap z-[48] w-full bg-white border-b text-sm py-2.5 sm:py-4 lg:pl-64 dark:bg-gray-800 dark:border-gray-700">
@@ -165,7 +170,7 @@ export default function Header() {
                   </p>
                 </div>
 
-                {notifications.length === 0 ? (
+                {notifications.length < 0 ? (
                   <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
                 ) : (
                   notificationElements

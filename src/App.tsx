@@ -23,7 +23,7 @@ function App() {
   useEffect(() => {
     const socket = io(CUSTOM_ENV.API_URL);
     socket.on("connect", () => {
-      socket.emit("login", { userId: user.id });
+      socket.emit("login", { userId: user._id });
 
       const socketEventHandlers = [
         { event: "message", action: (message: any) => console.log(message) },
