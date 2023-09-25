@@ -11,12 +11,10 @@ import AddProduct from "../pages/ProductPage/Add";
 import ListOrder from "../pages/OrderPage";
 import BannerPage from "../pages/BannerPage";
 import BlogPage from "../pages/BlogPage";
-import PromotionPage from "../pages/PromotionPage";
 import CouponPage from "../pages/CouponPage";
 import CouponUserPage from "../pages/CouponUserPage";
 import UserPage from "../pages/UserPage";
 import CommentPage from "../pages/CommentPage";
-import ChartPage from "../pages/ChartPage";
 import ChatPage from "../pages/ChatPage";
 
 export default function getUserRoutes(user: any, setLoadingBarProgress: any) {
@@ -65,12 +63,7 @@ export default function getUserRoutes(user: any, setLoadingBarProgress: any) {
           path="/blogs"
           element={<BlogPage setLoadingBarProgress={setLoadingBarProgress} />}
         />
-        <Route
-          path="/promotions"
-          element={
-            <PromotionPage setLoadingBarProgress={setLoadingBarProgress} />
-          }
-        />
+    
         <Route
           path="/coupons"
           element={<CouponPage setLoadingBarProgress={setLoadingBarProgress} />}
@@ -103,10 +96,7 @@ export default function getUserRoutes(user: any, setLoadingBarProgress: any) {
           path="/chats"
           element={<ChatPage setLoadingBarProgress={setLoadingBarProgress} />}
         />
-        <Route
-          path="/charts"
-          element={<ChartPage setLoadingBarProgress={setLoadingBarProgress} />}
-        />
+
         <Route path="*" element={<NotFoundPage />} />
       </>
     );
@@ -155,12 +145,7 @@ export default function getUserRoutes(user: any, setLoadingBarProgress: any) {
           path="/blogs"
           element={<BlogPage setLoadingBarProgress={setLoadingBarProgress} />}
         />
-        <Route
-          path="/promotions"
-          element={
-            <PromotionPage setLoadingBarProgress={setLoadingBarProgress} />
-          }
-        />
+     
         <Route
           path="/coupons"
           element={<CouponPage setLoadingBarProgress={setLoadingBarProgress} />}

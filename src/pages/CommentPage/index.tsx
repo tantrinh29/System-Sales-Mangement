@@ -15,8 +15,8 @@ import { commentService } from "../../services/comment.service";
 interface DataType {
   key: React.Key;
   _id: any;
-  userID: any;
-  productID: any;
+  user: any;
+  product: any;
   rating: any;
   comment: any;
   createdAt: Date;
@@ -80,14 +80,14 @@ const CommentPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
       title: "USER",
       sorter: true,
       render: (record: DataType) => (
-        <p className="font-medium uppercase">{record.userID.fullname}</p>
+        <p className="font-medium uppercase">{record.user.fullname}</p>
       ),
     },
     {
       title: "PRODUCT",
       sorter: true,
       render: (record: DataType) => (
-        <p className="font-medium uppercase">{record.productID.nameProduct}</p>
+        <p className="font-medium uppercase">{record.product.nameProduct}</p>
       ),
     },
     {

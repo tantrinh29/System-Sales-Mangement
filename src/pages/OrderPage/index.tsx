@@ -399,6 +399,7 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
                 <Select.Option value="Chờ Giao Hàng">
                   Chờ Giao Hàng
                 </Select.Option>
+                <Select.Option value="Hủy Đơn Hàng">Hủy Đơn Hàng</Select.Option>
               </Select>
             </Form.Item>
           </div>
