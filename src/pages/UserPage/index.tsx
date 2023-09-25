@@ -102,6 +102,11 @@ const UserPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
       sorter: true,
     },
     {
+      title: "EMAIL",
+      dataIndex: "email",
+      sorter: true,
+    },
+    {
       title: "PHONE",
       sorter: true,
       render: (record: any, index: any) => (
@@ -120,7 +125,7 @@ const UserPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
       ),
     },
     {
-      title: "VERIFY",
+      title: "STATUS",
       sorter: true,
       render: (record: any, index: any) => (
         <p key={index} className="font-medium uppercase">
@@ -194,6 +199,7 @@ const UserPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
     if (isEditing) {
       form.setFieldsValue({
         role: isDataEdit.role,
+        verify: isDataEdit.verify,
       });
     } else {
       form.validateFields();
@@ -315,6 +321,21 @@ const UserPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
                 <Select.Option value="ADMIN">ADMIN</Select.Option>
                 <Select.Option value="STAFF">STAFF</Select.Option>
                 <Select.Option value="MEMBER">MEMBER</Select.Option>
+              </Select>
+            </Form.Item>
+
+            <Form.Item
+              label="Status"
+              name="verify"
+              style={{
+                marginBottom: 0,
+              }}
+              rules={[{ required: true, message: "* Status is required" }]}
+            >
+              <Select size={SIZEFORM} placeholder="Status">
+                <Select.Option value={"2"}>Banned</Select.Option>
+                <Select.Option value={"1"}>Verfied</Select.Option>
+                <Select.Option value={"0"}>Unverified</Select.Option>
               </Select>
             </Form.Item>
           </div>
