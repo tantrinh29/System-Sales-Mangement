@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Form, Select, Table, message } from "antd";
+import { Button, Empty, Form, Input, Select, Table, message } from "antd";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { ColumnsType } from "antd/es/table";
 import {
@@ -52,7 +52,7 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
   // const [isDetailProduct, setIsDetailProduct] = useState<any>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [isDataEdit, setDataEdit] = useState<any>([]);
+  const [isDataEdit, setDataEdit] = useState<any>();
 
   const handleTabClick = (index: number) => {
     setActiveTab(index);
@@ -80,12 +80,12 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
   const { data: isOrder, isLoading } = useQuery(
     ["orders"],
     () => {
-      if (user?.role === "ADMIN" && user?.verify == 1) {
+      if (user && user?.role === "ADMIN" && user?.verify == 1) {
         return orderService.fetchAllOrders();
       } else if (user?.role === "EMPLOYEE" && user?.verify == 1) {
         return orderService.fetchOrderByAssignedToID(user?._id);
       } else {
-        return [];
+        return null;
       }
     },
     {
@@ -169,11 +169,22 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
       title: "ASSIGN",
       render: (record: DataType) => (
         <div>
-          {record?.assignedToID && record?.assigned ? (
+          {user && user?.role === "ADMIN" && user?.verify == 1 ? (
+            record?.assignedToID && record?.assigned ? (
+              <span className="font-medium">{record?.assigned.fullname}</span>
+            ) : (
+              <button
+                onClick={() => handleEdit(record)}
+                className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+              >
+                Assigned To
+              </button>
+            )
+          ) : record?.assignedToID && record?.assigned ? (
             <span className="font-medium">{record?.assigned.fullname}</span>
           ) : (
             <button
-              onClick={() => handleEdit(record)}
+              onClick={() => onUpdate(record._id)}
               className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
             >
               Assigned To
@@ -215,15 +226,6 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
       ),
     },
   ];
-
-  // const onChange: TableProps<DataType>["onChange"] = (
-  //   pagination,
-  //   filters,
-  //   sorter,
-  //   extra
-  // ) => {
-  //   // console.log("params", pagination, filters, sorter, extra);
-  // };
 
   useEffect(() => {
     if (isEditing) {
@@ -301,13 +303,14 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
   //   return images.length > 0 ? images : null;
   // };
 
-  const updateUserMutation = useMutation((data) =>
-    orderService.fetchUpdateOrder(isDataEdit._id, data)
-  );
+  const updateOrderMutation = useMutation((data: any) => {
+    const { orderID, ...updateData } = data;
+    return orderService.fetchUpdateOrder(orderID, updateData);
+  });
 
-  const onFinish = async (data: any) => {
+  const updateOrder = async (data: any) => {
     try {
-      const response = await updateUserMutation.mutateAsync(data);
+      const response = await updateOrderMutation.mutateAsync(data);
       if (response.status === true) {
         message.success(`${response.message}`);
       } else {
@@ -319,6 +322,22 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
       queryClient.invalidateQueries(["orders"]);
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const onUpdate = async (data: any) => {
+    // Nếu người dùng có quyền admin, hiển thị modal để chọn thành viên thì lấy dữ liệu isDataEdit
+    if (user && user.role === "ADMIN" && user.verify == 1) {
+      setModalVisible(true);
+      const updateData = {
+        assignedToID: data.assignedToID,
+        orderID: isDataEdit._id,
+      };
+      updateOrder(updateData);
+    } else if (user && user.role === "EMPLOYEE" && user.verify == 1) {
+      // Nếu người dùng có quyền nhân viên, chỉ cần gán user._id vào assignedToID và data lấy _id của đơn hàng đó
+      const updatedData = { assignedToID: user._id, orderID: data };
+      updateOrder(updatedData);
     }
   };
 
@@ -339,7 +358,13 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
                     : "inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
                 }
               >
-                Assigned
+                Assigned (
+                {
+                  transformedData?.filter(
+                    (order) => order.assignedToID !== null
+                  ).length
+                }
+                )
               </Link>
             </li>
             <li onClick={() => handleTabClick(1)}>
@@ -351,7 +376,13 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
                     : "inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
                 }
               >
-                Unassigned
+                Unassigned (
+                {
+                  transformedData?.filter(
+                    (order) => order.assignedToID === null
+                  ).length
+                }
+                )
               </Link>
             </li>
           </ul>
@@ -420,31 +451,51 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
           form={form}
           layout="vertical"
           autoComplete="off"
-          onFinish={onFinish}
+          onFinish={onUpdate}
         >
           <div className="grid gap-4">
-            <Form.Item
-              label="Nhân Viên"
-              name="assignedToID"
-              style={{
-                marginBottom: 0,
-              }}
-              rules={[{ required: true, message: "* Assigned is required" }]}
-            >
-              <Select size={SIZEFORM} placeholder="Nhân Viên Quản Lí Đơn Hàng">
-                <Select.Option value="">Vui Lòng Chọn Nhân Viên</Select.Option>
-                {isUser
-                  ?.filter(
-                    (item: any) =>
-                      item.role === "EMPLOYEE" || item.role === "ADMIN"
-                  )
-                  .map((item: any) => (
-                    <Select.Option key={item._id} value={item._id}>
-                      {item.fullname} -- ({item.role})
-                    </Select.Option>
-                  ))}
-              </Select>
-            </Form.Item>
+            {user && user?.role === "ADMIN" && user?.verify == 1 ? (
+              <Form.Item
+                label="Nhân Viên"
+                name="assignedToID"
+                style={{
+                  marginBottom: 0,
+                }}
+                rules={[{ required: true, message: "* Assigned is required" }]}
+              >
+                <Select
+                  size={SIZEFORM}
+                  placeholder="Nhân Viên Quản Lí Đơn Hàng"
+                >
+                  <Select.Option value="">
+                    Vui Lòng Chọn Nhân Viên
+                  </Select.Option>
+                  {isUser
+                    ?.filter(
+                      (item: any) =>
+                        item.role === "EMPLOYEE" || item.role === "ADMIN"
+                    )
+                    .map((item: any) => (
+                      <Select.Option key={item._id} value={item._id}>
+                        {item.fullname} -- ({item.role})
+                      </Select.Option>
+                    ))}
+                </Select>
+              </Form.Item>
+            ) : user && user?.role === "EMPLOYEE" && user?.verify == 1 ? (
+              <Form.Item
+                label="Assigned To"
+                name="assignedToID"
+                style={{
+                  marginBottom: 0,
+                }}
+                initialValue={user?._id}
+              >
+                <Input disabled />
+              </Form.Item>
+            ) : (
+              <Empty />
+            )}
           </div>
         </Form>
       </ModalForm>

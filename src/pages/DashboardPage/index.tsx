@@ -254,7 +254,9 @@ const Home: React.FC<Props> = ({ setLoadingBarProgress }) => {
           </div>
         </div>
         <div className="bg-lightpurple-100 rounded-2xl p-6 border">
-          <p className="text-sm font-semibold text-black mb-2">Account Disabled</p>
+          <p className="text-sm font-semibold text-black mb-2">
+            Account Disabled
+          </p>
           <div className="flex items-center justify-between">
             <h2 className="text-2xl leading-9 font-semibold text-black">
               {isLoading ? <Loading /> : results[3].data?.length}
@@ -331,12 +333,11 @@ const Home: React.FC<Props> = ({ setLoadingBarProgress }) => {
           </div>
         </div>
       </div>
-        <PdfExport title="thongke">
-          <div className="actual-receipt border p-2 rounded-2xl">
-            <Chart type="bar" data={orderOption} options={options} />
-          </div>
-        </PdfExport>
-    
+      <PdfExport title="thongke">
+        <div className="actual-receipt border p-2 rounded-2xl">
+          <Chart type="bar" data={orderOption} options={options} />
+        </div>
+      </PdfExport>
     </Layout>
   );
 };
