@@ -12,11 +12,17 @@ import { orderService } from "../../services/order.service";
 import Layout from "../../components/Layout";
 import ModalForm from "../../components/Modal";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { AppState } from "../../store";
+import { userService } from "../../services/user.service";
 
 interface DataType {
   _id: any;
+  code: any;
   user: any;
   totalPrice: any;
+  assignedToID: any;
+  assigned: any;
   payment: any;
   vnpay: any;
   momo: any;
@@ -37,7 +43,9 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
       setLoadingBarProgress(100);
     }, RANDOM.timeout);
   }, []);
+  const user = useSelector((state: AppState) => state.auth.user);
   const queryClient = useQueryClient();
+  const [activeTab, setActiveTab] = useState<number>(0);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
@@ -46,23 +54,45 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isDataEdit, setDataEdit] = useState<any>([]);
 
+  const handleTabClick = (index: number) => {
+    setActiveTab(index);
+  };
+
   // const handleOpenModal = (data: DataType) => {
   //   setIsDetailProduct(data.products);
   //   setModalVisible(true);
   // };
 
-  // const handleCloseModal = () => {
-  //   setModalVisible(false);
-  //   setIsDetailProduct([]);
-  // };
+  const { data: isUser } = useQuery(
+    ["users"],
+    () => {
+      if (user?.role === "ADMIN" && user?.verify == 1) {
+        return userService.fetchAllUsers();
+      }
+      return [];
+    },
+    {
+      retry: 3,
+      retryDelay: 1000,
+    }
+  );
 
-  // const handleOke = () => {
-  //   setLoading(true);
-  //   setTimeout(() => {
-  //     setLoading(false);
-  //     setModalVisible(false);
-  //   }, 1000);
-  // };
+  const { data: isOrder, isLoading } = useQuery(
+    ["orders"],
+    () => {
+      if (user?.role === "ADMIN" && user?.verify == 1) {
+        return orderService.fetchAllOrders();
+      } else if (user?.role === "EMPLOYEE" && user?.verify == 1) {
+        return orderService.fetchOrderByAssignedToID(user?._id);
+      } else {
+        return [];
+      }
+    },
+    {
+      retry: 3,
+      retryDelay: 1000,
+    }
+  );
 
   const handleEdit = (data: any) => {
     setDataEdit(data);
@@ -85,15 +115,6 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
     }, 1000);
   };
 
-  const start = () => {
-    setLoading(true);
-
-    setTimeout(() => {
-      setSelectedRowKeys([]);
-      setLoading(false);
-    }, 1000);
-  };
-
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
     // console.log("selectedRowKeys changed: ", newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
@@ -103,19 +124,14 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
     selectedRowKeys,
     onChange: onSelectChange,
   };
-  const hasSelected = selectedRowKeys.length > 0;
 
   const columns: ColumnsType<DataType> = [
-    {
-      title: "ID",
-      dataIndex: "_id",
-    },
     {
       title: "CODE",
       dataIndex: "code",
     },
     {
-      title: "USER",
+      title: "CUSTOMER",
       render: (record: DataType) => (
         <span className="uppercase font-bold">{record.user.fullname}</span>
       ),
@@ -124,30 +140,19 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
       title: "TOTAL PRICE",
       sorter: (a: any, b: any) => a.totalPrice - b.totalPrice,
       render: (record: DataType) => (
-        <span>{parseInt(record.totalPrice).toLocaleString()} VND</span>
+        <span>{parseInt(record.totalPrice).toLocaleString()}</span>
       ),
     },
     {
       title: "PAYMENT METHOD",
       render: (record: DataType) => (
-        <span className="uppercase font-bold">
+        <span className="uppercase font-bold text-xs">
           {record.payment[0].namePayment}
         </span>
       ),
     },
     {
       title: "STATUS",
-      filters: [
-        {
-          text: "Chưa Thanh Toán",
-          value: "Chưa Thanh Toán",
-        },
-        {
-          text: "Đã Thanh Toán",
-          value: "Đã Thanh Toán",
-        },
-      ],
-      onFilter: (value: any, record: DataType) => record.status === value,
       render: (record: DataType) => (
         <div
           className={`${
@@ -160,6 +165,24 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
         </div>
       ),
     },
+    {
+      title: "ASSIGN",
+      render: (record: DataType) => (
+        <div>
+          {record?.assignedToID && record?.assigned ? (
+            <span className="font-medium">{record?.assigned.fullname}</span>
+          ) : (
+            <button
+              onClick={() => handleEdit(record)}
+              className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+            >
+              Assigned To
+            </button>
+          )}
+        </div>
+      ),
+    },
+
     {
       title: "TIME",
       sorter: true,
@@ -175,15 +198,16 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
       render: (record: DataType) => (
         <>
           <button
+            disabled={record.assignedToID === null}
             onClick={() => handleEdit(record)}
-            className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+            className="font-medium text-blue-600 hover:underline"
           >
-            Update
+            Edit
           </button>{" "}
           {" / "}{" "}
           <Link
-            to={"/"}
-            className="font-medium text-red-600 dark:text-blue-500 hover:underline"
+            to={`/orders/${record.code}`}
+            className="font-medium text-red-600 hover:underline"
           >
             Chi Tiết
           </Link>
@@ -204,23 +228,18 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
   useEffect(() => {
     if (isEditing) {
       form.setFieldsValue({
-        status: isDataEdit.status,
+        assignedToID: isDataEdit.assignedToID,
       });
     } else {
       form.validateFields();
     }
   }, [isEditing, isDataEdit, form]);
 
-  const { data: isOrder, isLoading } = useQuery(
-    ["orders"],
-    () => orderService.fetchAllOrders(),
-    {
-      retry: 3,
-      retryDelay: 1000,
-    }
-  );
-
   const transformedData = transformDataWithKey(isOrder); // custom id to key
+  const filteredOrders =
+    activeTab === 0
+      ? transformedData?.filter((order) => order.assignedToID !== null)
+      : transformedData?.filter((order) => order.assignedToID === null);
 
   // const detailOrder = [
   //   {
@@ -302,29 +321,52 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
       console.error(error);
     }
   };
+
   return (
     <Layout>
-      <div className="flex justify-between">
+      <div className="flex justify-between items-center">
+        <div
+          className="text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700"
+          style={{ marginBottom: 16 }}
+        >
+          <ul className="flex flex-wrap -mb-px">
+            <li onClick={() => handleTabClick(0)}>
+              <Link
+                to="#"
+                className={
+                  activeTab === 0
+                    ? "inline-block p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active dark:text-blue-500 dark:border-blue-500 mr-2"
+                    : "inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+                }
+              >
+                Assigned
+              </Link>
+            </li>
+            <li onClick={() => handleTabClick(1)}>
+              <Link
+                to="#"
+                className={
+                  activeTab === 1
+                    ? "inline-block p-4 text-blue-600 border-b-2 border-blue-600 rounded-t-lg active dark:text-blue-500 dark:border-blue-500 mr-2"
+                    : "inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+                }
+              >
+                Unassigned
+              </Link>
+            </li>
+          </ul>
+        </div>
         <div style={{ marginBottom: 16 }}>
-          <Button
-            className="bg-blue-500"
-            type="primary"
-            onClick={start}
-            disabled={!hasSelected}
-            loading={loading}
-          >
-            Reload
-          </Button>
-          <span style={{ marginLeft: 8 }}>
-            {hasSelected ? `Selected ${selectedRowKeys.length} items` : ""}
-          </span>
+          <button className="bg-blue-500 px-4 p-1.5 text-white rounded-lg">
+            Create order
+          </button>
         </div>
       </div>
       <Table
         rowSelection={rowSelection}
         columns={columns}
         loading={isLoading}
-        dataSource={transformedData}
+        dataSource={filteredOrders}
         size={"small"}
       />
       {/* <ModalDetailOrder
@@ -353,7 +395,7 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
       </ModalDetailOrder> */}
 
       <ModalForm
-        title={isEditing ? "Edit Order" : "Add Order"}
+        title={isEditing ? "Assigned" : "Add Order"}
         loading={loading}
         open={modalVisible}
         onClose={handleCloseModal}
@@ -382,24 +424,25 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
         >
           <div className="grid gap-4">
             <Form.Item
-              label="Trạng Thái Đơn Hàng"
-              name="status"
+              label="Nhân Viên"
+              name="assignedToID"
               style={{
                 marginBottom: 0,
               }}
-              rules={[{ required: true, message: "* Status is required" }]}
+              rules={[{ required: true, message: "* Assigned is required" }]}
             >
-              <Select size={SIZEFORM} placeholder="Trạng Thái Đơn Hàng">
-                <Select.Option value="Chờ Thanh Toán">
-                  Chờ Thanh Toán
-                </Select.Option>
-                <Select.Option value="Đã Hoàn Thành">
-                  Đã Hoàn Thành
-                </Select.Option>
-                <Select.Option value="Chờ Giao Hàng">
-                  Chờ Giao Hàng
-                </Select.Option>
-                <Select.Option value="Hủy Đơn Hàng">Hủy Đơn Hàng</Select.Option>
+              <Select size={SIZEFORM} placeholder="Nhân Viên Quản Lí Đơn Hàng">
+                <Select.Option value="">Vui Lòng Chọn Nhân Viên</Select.Option>
+                {isUser
+                  ?.filter(
+                    (item: any) =>
+                      item.role === "EMPLOYEE" || item.role === "ADMIN"
+                  )
+                  .map((item: any) => (
+                    <Select.Option key={item._id} value={item._id}>
+                      {item.fullname} -- ({item.role})
+                    </Select.Option>
+                  ))}
               </Select>
             </Form.Item>
           </div>

@@ -11,7 +11,7 @@ import { CUSTOM_ENV } from "./utils/custom.env";
 import { addNotification } from "./store/notification/actions";
 import getUserRoutes from "./routes";
 function App() {
-  const allowedRoles = ["ADMIN", "STAFF"];
+  const allowedRoles = ["ADMIN", "EMPLOYEE"];
   const { loadingBarProgress, setLoadingBarProgress } =
     useContext<any>(AppContext);
   const navigate = useNavigate();

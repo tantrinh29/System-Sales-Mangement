@@ -100,7 +100,7 @@ export default function getUserRoutes(user: any, setLoadingBarProgress: any) {
         <Route path="*" element={<NotFoundPage />} />
       </>
     );
-  } else if (user && user.role === "STAFF" && user.verify == 1) {
+  } else if (user && user.role === "EMPLOYEE" && user.verify == 1) {
     return (
       <>
         <Route

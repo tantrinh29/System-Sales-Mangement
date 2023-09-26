@@ -13,7 +13,7 @@ import { AppState } from "..";
 import { verifyToken } from "../../helpers/verifyToken";
 import { userService } from "../../services/user.service";
 
-const allowedRoles = ["ADMIN", "STAFF"];
+const allowedRoles = ["ADMIN", "EMPLOYEE"];
 
 export const login = (
   data: any
