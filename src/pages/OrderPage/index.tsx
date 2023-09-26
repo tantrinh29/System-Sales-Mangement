@@ -328,18 +328,21 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
   };
 
   const onUpdate = async (data: any) => {
-    // Nếu người dùng có quyền admin, hiển thị modal để chọn thành viên thì lấy dữ liệu isDataEdit
-    if (user && user.role === "ADMIN" && user.verify == 1) {
-      setModalVisible(true);
-      const updateData = {
-        assignedToID: data.assignedToID,
-        orderID: isDataEdit._id,
-      };
+    if (!user || user.verify != 1) return;
+
+    const updateData =
+      user.role === "ADMIN" 
+        ? {
+            assignedToID: data.assignedToID,
+            orderID: isDataEdit._id,
+          }
+        : user.role === "EMPLOYEE"
+        ? { assignedToID: user._id, orderID: data }
+        : null;
+
+    if (updateData) {
+      setModalVisible(false);
       updateOrder(updateData);
-    } else if (user && user.role === "EMPLOYEE" && user.verify == 1) {
-      // Nếu người dùng có quyền nhân viên, chỉ cần gán user._id vào assignedToID và data lấy _id của đơn hàng đó
-      const updatedData = { assignedToID: user._id, orderID: data };
-      updateOrder(updatedData);
     }
   };
 
