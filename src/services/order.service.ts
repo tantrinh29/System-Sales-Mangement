@@ -30,7 +30,6 @@ const fetchOrderByAssignedToID = async (id: any) => {
 };
 
 const fetchUpdateOrder = async (id: any, data: any) => {
-  console.log(data);
   try {
     const response = await http.update(`/order/updateOrder/${id}`, data);
     return response;

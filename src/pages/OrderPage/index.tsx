@@ -180,16 +180,18 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
                 Assigned To
               </button>
             )
-          ) : record?.assignedToID && record?.assigned ? (
-            <span className="font-medium">{record?.assigned.fullname}</span>
-          ) : (
-            <button
-              onClick={() => onUpdate(record._id)}
-              className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-            >
-              Assigned To
-            </button>
-          )}
+          ) : user && user?.role === "EMPLOYEE" && user?.verify == 1 ? (
+            record?.assignedToID && record?.assigned ? (
+              <span className="font-medium">{record?.assigned.fullname}</span>
+            ) : (
+              <button
+                onClick={() => onUpdate(record._id)}
+                className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+              >
+                Assigned To
+              </button>
+            )
+          ) : null}
         </div>
       ),
     },
