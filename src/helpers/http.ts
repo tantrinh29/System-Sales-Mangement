@@ -36,7 +36,7 @@ class Http {
           //authorization.
           if (
             err.response.data.errors.authorization.msg.message ===
-              "jwt expired" &&
+            "jwt expired" &&
             err.response.data.errors.authorization.msg.status === 402
           ) {
             if (refreshToken) {
@@ -91,7 +91,7 @@ class Http {
 
   public async post(url: string, data: any): Promise<any> {
     try {
-      const response = await this.instance.post(url, data);
+      const response = await this.instance.post(url, JSON.stringify(data));
       return response.data;
     } catch (error) {
       console.error(error);

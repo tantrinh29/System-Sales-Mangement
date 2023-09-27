@@ -22,6 +22,7 @@ interface DataType {
   user: any;
   totalPrice: any;
   assignedToID: any;
+  nameCustomer: any;
   assigned: any;
   payment: any;
   vnpay: any;
@@ -133,7 +134,7 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
     {
       title: "CUSTOMER",
       render: (record: DataType) => (
-        <span className="uppercase font-bold">{record.user.fullname}</span>
+        <span className="uppercase font-bold">{record && record.user.fullname !== null ? record.user.fullname : record.nameCustomer}</span>
       ),
     },
     {
