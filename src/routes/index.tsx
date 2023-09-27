@@ -56,7 +56,7 @@ export default function getUserRoutes(user: any, setLoadingBarProgress: any) {
           path="/orders"
           element={<ListOrder setLoadingBarProgress={setLoadingBarProgress} />}
         />
-           <Route
+        <Route
           path="/order/add"
           element={<AddOrder setLoadingBarProgress={setLoadingBarProgress} />}
         />
@@ -68,7 +68,7 @@ export default function getUserRoutes(user: any, setLoadingBarProgress: any) {
           path="/blogs"
           element={<BlogPage setLoadingBarProgress={setLoadingBarProgress} />}
         />
-    
+
         <Route
           path="/coupons"
           element={<CouponPage setLoadingBarProgress={setLoadingBarProgress} />}
@@ -143,6 +143,10 @@ export default function getUserRoutes(user: any, setLoadingBarProgress: any) {
           element={<ListOrder setLoadingBarProgress={setLoadingBarProgress} />}
         />
         <Route
+          path="/order/add"
+          element={<AddOrder setLoadingBarProgress={setLoadingBarProgress} />}
+        />
+        <Route
           path="/banners"
           element={<BannerPage setLoadingBarProgress={setLoadingBarProgress} />}
         />
@@ -150,7 +154,7 @@ export default function getUserRoutes(user: any, setLoadingBarProgress: any) {
           path="/blogs"
           element={<BlogPage setLoadingBarProgress={setLoadingBarProgress} />}
         />
-     
+
         <Route
           path="/coupons"
           element={<CouponPage setLoadingBarProgress={setLoadingBarProgress} />}

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Form, Button, Input, Select, message } from "antd";
+import { Form, Button, Input, Select, message, Empty } from "antd";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { RANDOM, SIZEFORM, dataColors } from "../../../utils/custom.env";
 import { orderService } from "../../../services/order.service"; // Đảm bảo bạn đã import orderService hoặc module tương tự từ dự án của bạn
@@ -10,6 +10,8 @@ import { useSelector } from "react-redux";
 import { MinusCircleOutlined } from "@ant-design/icons";
 import { productService } from "../../../services/product.service";
 import { paymentService } from "../../../services/payment.service";
+import { userService } from "../../../services/user.service";
+import { v4 as uuidv4 } from "uuid";
 
 type Props = {
   setLoadingBarProgress: any;
@@ -24,8 +26,22 @@ const AddOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
   }, []);
 
   const navigate = useNavigate();
-  const user = useSelector((state: AppState) => state.auth.accessToken);
+  const user = useSelector((state: AppState) => state.auth.user);
   const [form] = Form.useForm();
+
+  const { data: isUser } = useQuery(
+    ["users"],
+    () => {
+      if (user?.role === "ADMIN" && user?.verify == 1) {
+        return userService.fetchAllUsers();
+      }
+      return [];
+    },
+    {
+      retry: 3,
+      retryDelay: 1000,
+    }
+  );
 
   const { data: isProduct } = useQuery(
     ["products"],
@@ -44,11 +60,28 @@ const AddOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
     }
   );
 
-  const postOrderMutation = useMutation(
-    (data) => orderService.fetchPostOrder(data) // Sử dụng hàm tạo đơn hàng từ orderService hoặc module tương tự
+  const postOrderMutation = useMutation((data) =>
+    orderService.fetchPostOrder(data)
   );
 
   const onFinish = async (values: any) => {
+    let totalPrice = 0;
+    // Duyệt qua danh sách sản phẩm và thay thế productID bằng _id tương ứng
+    values.products.map((product: any) => {
+      const productID = product.productID;
+      const selectedProduct = isProduct.find((p: any) => p._id === productID);
+
+      if (selectedProduct) {
+        const price = parseFloat(selectedProduct.price_has_dropped) || 0;
+        const quantity = parseInt(product.quantity) || 0;
+        totalPrice += price * quantity;
+        return totalPrice;
+    }
+    });
+    values.totalPrice = totalPrice;
+    values.status = "Đã Thanh Toán";
+    values.code = uuidv4();
+    console.log(values);
     try {
       const response = await postOrderMutation.mutateAsync(values);
       if (response.status === true) {
@@ -117,7 +150,7 @@ const AddOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
                           Vui Lòng Chọn Màu
                         </Select.Option>
                         {dataColors?.map((item: any, index: number) => (
-                          <Select.Option key={index} value={item.id}>
+                          <Select.Option key={index} value={item.name}>
                             {item.name}
                           </Select.Option>
                         ))}
@@ -196,21 +229,43 @@ const AddOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
             </Select>
           </Form.Item>
 
-          <Form.Item
-            label="Status"
-            name="statusProduct"
-            style={{
-              marginBottom: 0,
-            }}
-            rules={[{ required: true, message: "* Status is required" }]}
-          >
-            <Select size={SIZEFORM} placeholder="Chọn Trạng Thái">
-              <Select.Option value="Chưa Thanh Toán">
-                Chưa Thanh Toán
-              </Select.Option>
-              <Select.Option value="Đã Thanh Toán">Đã Thanh Toán</Select.Option>
-            </Select>
-          </Form.Item>
+          {user && user?.role === "ADMIN" && user?.verify == 1 ? (
+            <Form.Item
+              label="Nhân Viên"
+              name="assignedToID"
+              style={{
+                marginBottom: 0,
+              }}
+              rules={[{ required: true, message: "* Assigned is required" }]}
+            >
+              <Select size={SIZEFORM} placeholder="Nhân Viên Quản Lí Đơn Hàng">
+                <Select.Option value="">Vui Lòng Chọn Nhân Viên</Select.Option>
+                {isUser
+                  ?.filter(
+                    (item: any) =>
+                      item.role === "EMPLOYEE" || item.role === "ADMIN"
+                  )
+                  .map((item: any) => (
+                    <Select.Option key={item._id} value={item._id}>
+                      {item.fullname} -- ({item.role})
+                    </Select.Option>
+                  ))}
+              </Select>
+            </Form.Item>
+          ) : user && user?.role === "EMPLOYEE" && user?.verify == 1 ? (
+            <Form.Item
+              label="Assigned To"
+              name="assignedToID"
+              style={{
+                marginBottom: 0,
+              }}
+              initialValue={user?._id}
+            >
+              <Input disabled />
+            </Form.Item>
+          ) : (
+            <Empty />
+          )}
         </div>
 
         <div className="py-5">
