@@ -8,7 +8,8 @@ import BrandPage from "../pages/BrandPage";
 import ListProduct from "../pages/ProductPage/List";
 import EditProduct from "../pages/ProductPage/Edit";
 import AddProduct from "../pages/ProductPage/Add";
-import ListOrder from "../pages/OrderPage";
+import AddOrder from "../pages/OrderPage/Add";
+import ListOrder from "../pages/OrderPage/List";
 import BannerPage from "../pages/BannerPage";
 import BlogPage from "../pages/BlogPage";
 import CouponPage from "../pages/CouponPage";
@@ -54,6 +55,10 @@ export default function getUserRoutes(user: any, setLoadingBarProgress: any) {
         <Route
           path="/orders"
           element={<ListOrder setLoadingBarProgress={setLoadingBarProgress} />}
+        />
+           <Route
+          path="/order/add"
+          element={<AddOrder setLoadingBarProgress={setLoadingBarProgress} />}
         />
         <Route
           path="/banners"

@@ -7,14 +7,14 @@ import {
   SIZEFORM,
   formatTime,
   transformDataWithKey,
-} from "../../utils/custom.env";
-import { orderService } from "../../services/order.service";
-import Layout from "../../components/Layout";
-import ModalForm from "../../components/Modal";
+} from "../../../utils/custom.env";
+import { orderService } from "../../../services/order.service";
+import Layout from "../../../components/Layout";
+import ModalForm from "../../../components/Modal";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { AppState } from "../../store";
-import { userService } from "../../services/user.service";
+import { AppState } from "../../../store";
+import { userService } from "../../../services/user.service";
 
 interface DataType {
   _id: any;
@@ -331,13 +331,14 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
     if (!user || user.verify != 1) return;
 
     const updateData =
-      user.role === "ADMIN" 
+      user.role === "ADMIN"
         ? {
             assignedToID: data.assignedToID,
             orderID: isDataEdit._id,
+            assignedAt: Date.now(),
           }
         : user.role === "EMPLOYEE"
-        ? { assignedToID: user._id, orderID: data }
+        ? { assignedToID: user._id, orderID: data, assignedAt: Date.now() }
         : null;
 
     if (updateData) {
@@ -392,10 +393,26 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
             </li>
           </ul>
         </div>
-        <div style={{ marginBottom: 16 }}>
-          <button className="bg-blue-500 px-4 p-1.5 text-white rounded-lg">
-            Create order
-          </button>
+        <div className="flex gap-2" style={{ marginBottom: 16 }}>
+          <div>
+            <input
+              type="text"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
+            focus:ring-blue-500 focus:border-blue-500 block w-full pl-3 p-1.5
+              dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Search..."
+              // value={searchText}
+              // onChange={(e) => setSearchText(e.target.value)}
+              required
+            />
+          </div>
+          <Link
+            to={"/order/add"}
+            className="bg-blue-500 px-4 p-1.5 text-white rounded-lg"
+            type="primary"
+          >
+            ADD
+          </Link>
         </div>
       </div>
       <Table
