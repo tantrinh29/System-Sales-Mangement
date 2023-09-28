@@ -168,7 +168,7 @@ const Home: React.FC<Props> = ({ setLoadingBarProgress }) => {
           <p className="text-sm font-semibold text-black mb-2">Orders</p>
           <div className="flex items-center justify-between">
             <h2 className="text-2xl leading-9 font-semibold text-black">
-              {isLoading ? <Loading /> : orderData.length}
+              {isLoading ? <Loading /> : orderData?.length}
             </h2>
             <div className="flex items-center gap-1">
               <p className="text-xs leading-[18px] text-black">+9.15%</p>
