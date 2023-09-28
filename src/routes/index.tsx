@@ -15,9 +15,10 @@ import BannerPage from "../pages/BannerPage";
 import BlogPage from "../pages/BlogPage";
 import CouponPage from "../pages/CouponPage";
 import CouponUserPage from "../pages/CouponUserPage";
-import UserPage from "../pages/UserPage";
+import UserPage from "../pages/UserPage/List";
 import CommentPage from "../pages/CommentPage";
 import ChatPage from "../pages/ChatPage";
+import AddUser from "../pages/UserPage/Add";
 
 export default function getUserRoutes(user: any, setLoadingBarProgress: any) {
   if (user && user.role === "ADMIN" && user.verify == 1) {
@@ -88,6 +89,11 @@ export default function getUserRoutes(user: any, setLoadingBarProgress: any) {
         <Route
           path="/users"
           element={<UserPage setLoadingBarProgress={setLoadingBarProgress} />}
+        />
+
+        <Route
+          path="/user/add"
+          element={<AddUser setLoadingBarProgress={setLoadingBarProgress} />}
         />
 
         <Route

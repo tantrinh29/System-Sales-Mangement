@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Button, Form, Popconfirm, Select, Table, message } from "antd";
-import Layout from "../../components/Layout";
+import Layout from "../../../components/Layout";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import ModalForm from "../../components/Modal";
+import ModalForm from "../../../components/Modal";
 import {
   RANDOM,
   SIZEFORM,
   formatTime,
   transformDataWithKey,
-} from "../../utils/custom.env";
-import { userService } from "../../services/user.service";
+} from "../../../utils/custom.env";
+import { userService } from "../../../services/user.service";
+import { Link } from "react-router-dom";
 
 type Props = {
   setLoadingBarProgress: any;
@@ -186,15 +187,6 @@ const UserPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
     },
   ];
 
-  // const onChange: TableProps<DataType>["onChange"] = (
-  //   pagination,
-  //   filters,
-  //   sorter,
-  //   extra
-  // ) => {
-  //   // console.log("params", pagination, filters, sorter, extra);
-  // };
-
   useEffect(() => {
     if (isEditing) {
       form.setFieldsValue({
@@ -259,17 +251,26 @@ const UserPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
               : ""}
           </span>
         </div>
-        <div>
-          <input
-            type="text"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
+        <div className="flex gap-2" style={{ marginBottom: 16 }}>
+          <div>
+            <input
+              type="text"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg
             focus:ring-blue-500 focus:border-blue-500 block w-full pl-3 p-1.5
               dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="Search..."
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            required
-          />
+              placeholder="Search..."
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              required
+            />
+          </div>
+          <Link
+            to={"/user/add"}
+            className="bg-blue-500 px-4 p-1.5 text-white rounded-lg"
+            type="primary"
+          >
+            ADD
+          </Link>
         </div>
       </div>
       <Table
