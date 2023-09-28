@@ -19,6 +19,9 @@ import {
   BarController,
   BarElement,
 } from "chart.js";
+import { useSelector } from "react-redux";
+import { AppState } from "../../store";
+import { commentService } from "../../services/comment.service";
 
 ChartJS.register(
   CategoryScale,
@@ -41,6 +44,7 @@ const Home: React.FC<Props> = ({ setLoadingBarProgress }) => {
       setLoadingBarProgress(100);
     }, RANDOM.timeout);
   }, []);
+  const user = useSelector((state: AppState) => state.auth.user);
   const results = useQueries({
     queries: [
       { queryKey: ["products", 1], queryFn: productService.fetchAllProducts },
@@ -48,8 +52,13 @@ const Home: React.FC<Props> = ({ setLoadingBarProgress }) => {
         queryKey: ["categories", 2],
         queryFn: categoryService.fetchAllCategories,
       },
-      { queryKey: ["users", 3], queryFn: userService.fetchAllUsers },
-      { queryKey: ["orders", 4], queryFn: orderService.fetchAllOrders },
+      {
+        queryKey: ["users", 3],
+        queryFn:
+          user?.role === "ADMIN" && user?.verify == 1
+            ? userService.fetchAllUsers
+            : commentService.fetchAllComments,
+      },
     ],
   });
 
@@ -57,7 +66,13 @@ const Home: React.FC<Props> = ({ setLoadingBarProgress }) => {
 
   const { data: orderData } = useQuery(
     ["orders"],
-    () => orderService.fetchAllOrders(),
+    () => {
+      if (user?.role === "ADMIN" && user?.verify == 1) {
+        return orderService.fetchAllOrders();
+      } else {
+        return orderService.fetchOrderByAssignedToID(user?._id);
+      }
+    },
     {
       retry: 3,
       retryDelay: 1000,
@@ -66,7 +81,7 @@ const Home: React.FC<Props> = ({ setLoadingBarProgress }) => {
 
   const groupOrdersByDay = (orders: any) => {
     if (!orders) {
-      return {}; // Return an empty object if orders is null or undefined
+      return {};
     }
 
     const groupedData = orders.reduce((result: any, order: any) => {
@@ -148,11 +163,12 @@ const Home: React.FC<Props> = ({ setLoadingBarProgress }) => {
             </div>
           </div>
         </div>
+
         <div className="bg-lightpurple-100 rounded-2xl p-6 border">
           <p className="text-sm font-semibold text-black mb-2">Orders</p>
           <div className="flex items-center justify-between">
             <h2 className="text-2xl leading-9 font-semibold text-black">
-              {isLoading ? <Loading /> : results[3].data?.length}
+              {isLoading ? <Loading /> : orderData.length}
             </h2>
             <div className="flex items-center gap-1">
               <p className="text-xs leading-[18px] text-black">+9.15%</p>
@@ -200,7 +216,11 @@ const Home: React.FC<Props> = ({ setLoadingBarProgress }) => {
           </div>
         </div>
         <div className="bg-lightpurple-100 rounded-2xl p-6 border">
-          <p className="text-sm font-semibold text-black mb-2">Active Users</p>
+          <p className="text-sm font-semibold text-black mb-2">
+            {user?.role === "ADMIN" && user?.verify == 1
+              ? "Active Users"
+              : "Comments"}
+          </p>
           <div className="flex items-center justify-between">
             <h2 className="text-2xl leading-9 font-semibold text-black">
               {isLoading ? <Loading /> : results[2].data?.length}
@@ -227,7 +247,7 @@ const Home: React.FC<Props> = ({ setLoadingBarProgress }) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-7 pb-5">
+      {/* <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-7 pb-5">
         <div className="bg-lightblue-100 rounded-2xl p-6 border">
           <p className="text-sm font-semibold text-black mb-2">Total Revenue</p>
           <div className="flex items-center justify-between">
@@ -332,12 +352,14 @@ const Home: React.FC<Props> = ({ setLoadingBarProgress }) => {
             </div>
           </div>
         </div>
-      </div>
-      <PdfExport title="thongke">
-        <div className="actual-receipt border p-2 rounded-2xl">
-          <Chart type="bar" data={orderOption} options={options} />
-        </div>
-      </PdfExport>
+      </div> */}
+      {user?.role === "ADMIN" && user?.verify == 1 ? (
+        <PdfExport title="thongke">
+          <div className="actual-receipt border p-2 rounded-2xl">
+            <Chart type="bar" data={orderOption} options={options} />
+          </div>
+        </PdfExport>
+      ) : null}
     </Layout>
   );
 };
