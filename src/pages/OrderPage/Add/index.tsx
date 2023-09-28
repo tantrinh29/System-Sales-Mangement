@@ -81,7 +81,7 @@ const AddOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
     values.totalPrice = totalPrice;
     values.status = "Đã Thanh Toán";
     values.code = uuidv4();
-    console.log(values);
+    // console.log(values);
     try {
       const response = await postOrderMutation.mutateAsync(values);
       if (response.status === true) {

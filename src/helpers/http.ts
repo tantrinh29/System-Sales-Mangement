@@ -91,7 +91,7 @@ class Http {
 
   public async post(url: string, data: any): Promise<any> {
     try {
-      const response = await this.instance.post(url, JSON.stringify(data));
+      const response = await this.instance.post(url, data);
       return response.data;
     } catch (error) {
       console.error(error);

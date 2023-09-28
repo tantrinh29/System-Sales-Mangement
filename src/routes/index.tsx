@@ -10,6 +10,7 @@ import EditProduct from "../pages/ProductPage/Edit";
 import AddProduct from "../pages/ProductPage/Add";
 import AddOrder from "../pages/OrderPage/Add";
 import ListOrder from "../pages/OrderPage/List";
+import EditOrder from "../pages/OrderPage/Edit";
 import BannerPage from "../pages/BannerPage";
 import BlogPage from "../pages/BlogPage";
 import CouponPage from "../pages/CouponPage";
@@ -59,6 +60,10 @@ export default function getUserRoutes(user: any, setLoadingBarProgress: any) {
         <Route
           path="/order/add"
           element={<AddOrder setLoadingBarProgress={setLoadingBarProgress} />}
+        />
+        <Route
+          path="/order/edit/:code"
+          element={<EditOrder setLoadingBarProgress={setLoadingBarProgress} />}
         />
         <Route
           path="/banners"
@@ -145,6 +150,10 @@ export default function getUserRoutes(user: any, setLoadingBarProgress: any) {
         <Route
           path="/order/add"
           element={<AddOrder setLoadingBarProgress={setLoadingBarProgress} />}
+        />
+        <Route
+          path="/order/edit/:code"
+          element={<EditOrder setLoadingBarProgress={setLoadingBarProgress} />}
         />
         <Route
           path="/banners"

@@ -20,6 +20,15 @@ const fetchOrderByID = async (id: any) => {
   }
 };
 
+const fetchOrderByCode = async (code: any) => {
+  try {
+    const response = await http.get(`/order/getOrderByCode/${code}`);
+    return response.result;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 const fetchOrderByAssignedToID = async (id: any) => {
   try {
     const response = await http.get(`/order/getOrderByAssignedToID/${id}`);
@@ -77,6 +86,7 @@ const fetchDeleteOrdersByIds = async (data: any) => {
 export const orderService = {
   fetchAllOrders,
   fetchOrderByID,
+  fetchOrderByCode,
   fetchOrderByAssignedToID,
   fetchPostOrder,
   fetchUpdateOrder,

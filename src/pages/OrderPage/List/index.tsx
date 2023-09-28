@@ -134,7 +134,11 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
     {
       title: "CUSTOMER",
       render: (record: DataType) => (
-        <span className="uppercase font-bold">{record && record.user.fullname !== null ? record.user.fullname : record.nameCustomer}</span>
+        <span className="uppercase font-bold">
+          {record && typeof record.user !== "object"
+            ? record.user.fullname + " [ Mua Trên Website ]"
+            : record.nameCustomer + " [ Mua Tại Cửa Hàng ]"}
+        </span>
       ),
     },
     {
@@ -172,7 +176,17 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
         <div>
           {user && user?.role === "ADMIN" && user?.verify == 1 ? (
             record?.assignedToID && record?.assigned ? (
-              <span className="font-medium">{record?.assigned.fullname}</span>
+              <span className="font-medium">
+                {record?.assigned.fullname} [
+                <button
+                  disabled={record.assignedToID === null}
+                  onClick={() => handleEdit(record)}
+                  className="font-medium text-blue-600 hover:underline"
+                >
+                  Edit
+                </button>
+                ]
+              </span>
             ) : (
               <button
                 onClick={() => handleEdit(record)}
@@ -211,13 +225,12 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
       key: "action",
       render: (record: DataType) => (
         <>
-          <button
-            disabled={record.assignedToID === null}
-            onClick={() => handleEdit(record)}
+          <Link
+            to={`/order/edit/${record.code}`}
             className="font-medium text-blue-600 hover:underline"
           >
             Edit
-          </button>{" "}
+          </Link>{" "}
           {" / "}{" "}
           <Link
             to={`/orders/${record.code}`}
