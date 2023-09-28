@@ -20,6 +20,14 @@ const fetchUserByID = async () => {
   }
 };
 
+const fetchPostUser = async (data: any) => {
+  try {
+    const response = await http.post(`/auth/register`, data);
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 
 const fetchUpdateUser = async (id: any, data: any) => {
@@ -46,6 +54,7 @@ const fetchDeleteUser = async (id: any) => {
 export const userService = {
   fetchAllUsers,
   fetchUserByID,
+  fetchPostUser,
   fetchUpdateUser,
   fetchDeleteUser
 };

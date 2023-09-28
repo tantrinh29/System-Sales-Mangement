@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Form, Input, Select, message } from "antd";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { RANDOM, SIZEFORM } from "../../../utils/custom.env";
-import { brandService } from "../../../services/brand.service";
-import { productService } from "../../../services/product.service";
+import address from "../../../json/address.json";
 import { useNavigate } from "react-router-dom";
 import Layout from "../../../components/Layout";
-import { AppState } from "../../../store";
-import { useSelector } from "react-redux";
+// import { AppState } from "../../../store";
+// import { useSelector } from "react-redux";
+import { userService } from "../../../services/user.service";
 
 type Props = {
   setLoadingBarProgress: any;
@@ -21,29 +21,47 @@ const AddUser: React.FC<Props> = ({ setLoadingBarProgress }) => {
     }, RANDOM.timeout);
   }, []);
   const navigate = useNavigate();
-  const user = useSelector((state: AppState) => state.auth.accessToken);
+  //   const user = useSelector((state: AppState) => state.auth.user);
   const [form] = Form.useForm();
+  const [provinces, setProvinces] = useState([]);
+  const [selectedProvince, setSelectedProvince] = useState("");
+  const [districts, setDistricts] = useState([]);
+  const [selectedDistrict, setSelectedDistrict] = useState("");
+  const [wards, setWards] = useState([]);
 
-  const { data: dataBrands } = useQuery(
-    ["brands"],
-    () => brandService.fetchAllBrands(),
-    {
-      staleTime: 1000,
-      refetchOnMount: false,
-    }
+  useEffect(() => {
+    setProvinces(address.provinces as any);
+    setDistricts(address.districts as any);
+    setWards(address.wards as any);
+  }, []);
+
+  const handleSelectProvince = (provinceId: any) => {
+    setSelectedProvince(provinceId);
+  };
+
+  const handleSelectDistrict = (districtId: any) => {
+    setSelectedDistrict(districtId);
+  };
+
+  const filteredDistricts = districts?.filter(
+    (district: any) => district.province_id === Number(selectedProvince)
   );
 
-  const postProductMutation = useMutation((data) =>
-    productService.fetchPostProduct(data)
+  const filteredWards = wards?.filter(
+    (ward: any) => ward.district_id === Number(selectedDistrict)
+  );
+
+  const postUserMutation = useMutation((data) =>
+    userService.fetchPostUser(data)
   );
 
   const onFinish = async (values: any) => {
+    console.log(values);
     try {
-      // Add mode
-      const response = await postProductMutation.mutateAsync(values);
+      const response = await postUserMutation.mutateAsync(values);
       if (response.status === true) {
         message.success(`${response.message}`);
-        navigate("/products");
+        navigate("/users");
       } else {
         message.error(`${response.message}`);
       }
@@ -116,6 +134,22 @@ const AddUser: React.FC<Props> = ({ setLoadingBarProgress }) => {
           </Form.Item>
 
           <Form.Item
+            label="Confirm Password"
+            name="confirm_password"
+            style={{
+              marginBottom: 0,
+            }}
+            rules={[
+              {
+                required: true,
+                message: "* Confirm Password is required",
+              },
+            ]}
+          >
+            <Input size={SIZEFORM} placeholder="**********" />
+          </Form.Item>
+
+          <Form.Item
             label="Phone"
             name="phone"
             style={{
@@ -127,36 +161,75 @@ const AddUser: React.FC<Props> = ({ setLoadingBarProgress }) => {
           </Form.Item>
 
           <Form.Item
-            label="City"
             name="city"
-            style={{
-              marginBottom: 0,
-            }}
-            rules={[{ required: true, message: "* City is required" }]}
+            label="Tỉnh/Thành phố"
+            rules={[
+              {
+                required: true,
+                message: "City is required",
+              },
+            ]}
           >
-            <Input size={SIZEFORM} placeholder="city" />
+            <Select
+              size="large"
+              value={selectedProvince}
+              onChange={handleSelectProvince}
+              placeholder="Select Province"
+            >
+              {provinces.map((province: any) => (
+                <Select.Option key={province.id} value={province.id}>
+                  {province.name}
+                </Select.Option>
+              ))}
+            </Select>
           </Form.Item>
 
           <Form.Item
-            label="District"
             name="district"
-            style={{
-              marginBottom: 0,
-            }}
-            rules={[{ required: true, message: "* District is required" }]}
+            label="Quận/Huyện"
+            rules={[
+              {
+                required: true,
+                message: "District is required",
+              },
+            ]}
           >
-            <Input size={SIZEFORM} placeholder="district" />
+            <Select
+              size="large"
+              value={selectedDistrict}
+              onChange={handleSelectDistrict}
+              placeholder="Select District"
+              disabled={!selectedProvince}
+            >
+              {filteredDistricts.map((district: any) => (
+                <Select.Option key={district.id} value={district.id}>
+                  {district.name}
+                </Select.Option>
+              ))}
+            </Select>
           </Form.Item>
 
           <Form.Item
-            label="Commune"
             name="commune"
-            style={{
-              marginBottom: 0,
-            }}
-            rules={[{ required: true, message: "* Commune is required" }]}
+            label="Phường/Xã"
+            rules={[
+              {
+                required: true,
+                message: "Commune is required",
+              },
+            ]}
           >
-            <Input size={SIZEFORM} placeholder="commune" />
+            <Select
+              size="large"
+              placeholder="Select Ward"
+              disabled={!selectedDistrict}
+            >
+              {filteredWards.map((ward: any) => (
+                <Select.Option key={ward.id} value={ward.id}>
+                  {ward.name}
+                </Select.Option>
+              ))}
+            </Select>
           </Form.Item>
 
           <Form.Item
@@ -167,7 +240,7 @@ const AddUser: React.FC<Props> = ({ setLoadingBarProgress }) => {
             }}
             rules={[{ required: true, message: "* Address is required" }]}
           >
-            <Input size={SIZEFORM} placeholder="address" />
+            <Input size={SIZEFORM} placeholder="Địa Chỉ Cụ Thể" />
           </Form.Item>
 
           <Form.Item
@@ -178,7 +251,7 @@ const AddUser: React.FC<Props> = ({ setLoadingBarProgress }) => {
             }}
             rules={[{ required: true, message: "* Role is required" }]}
           >
-            <Select size={SIZEFORM} placeholder="Chọn Role">
+            <Select size={SIZEFORM} placeholder="Chọn Phân Quyền">
               <Select.Option value="">Vui Lòng Chọn Role</Select.Option>
               <Select.Option value="admin">Admin</Select.Option>
               <Select.Option value="employee">Employee</Select.Option>
