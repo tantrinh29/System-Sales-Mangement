@@ -200,7 +200,7 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
               <span className="font-medium">{record?.assigned.fullname}</span>
             ) : (
               <button
-                onClick={() => onUpdate(record._id)}
+                onClick={() => onUpdate(record.code)}
                 className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
               >
                 Assigned To
@@ -323,6 +323,7 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
     const { orderID, ...updateData } = data;
     return orderService.fetchUpdateOrder(orderID, updateData);
   });
+  console.log(isDataEdit);
 
   const updateOrder = async (data: any) => {
     try {
@@ -348,7 +349,7 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
       user.role === "ADMIN"
         ? {
             assignedToID: data.assignedToID,
-            orderID: isDataEdit._id,
+            orderID: isDataEdit.code,
             assignedAt: Date.now(),
           }
         : user.role === "EMPLOYEE"
