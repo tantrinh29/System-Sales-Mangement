@@ -50,7 +50,7 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
-  // const [isDetailProduct, setIsDetailProduct] = useState<any>([]);
+  const [searchText, setSearchText] = useState<any>("");
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isDataEdit, setDataEdit] = useState<any>();
@@ -243,6 +243,24 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
     },
   ];
 
+  const filtered = isOrder.filter((order: any) => {
+    const searchTextLowerCase = searchText.toLowerCase();
+    const createdAt = new Date(order.createdAt);
+
+    if (!isNaN(createdAt.getTime())) {
+      const day = createdAt.getDate().toString().padStart(2, "0");
+      const month = (createdAt.getMonth() + 1).toString().padStart(2, "0");
+      const year = createdAt.getFullYear();
+      const hours = createdAt.getHours().toString().padStart(2, "0");
+      const minutes = createdAt.getMinutes().toString().padStart(2, "0");
+      const seconds = createdAt.getSeconds().toString().padStart(2, "0");
+
+      // Tạo một chuỗi tìm kiếm theo định dạng "dd/MM/yyyy - hh:mm:ss"
+      const searchDateString = `${day}/${month}/${year} - ${hours}:${minutes}:${seconds}`;
+      return searchDateString.toLowerCase().includes(searchTextLowerCase);
+    }
+  });
+
   useEffect(() => {
     if (isEditing) {
       form.setFieldsValue({
@@ -253,7 +271,7 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
     }
   }, [isEditing, isDataEdit, form]);
 
-  const transformedData = transformDataWithKey(isOrder); // custom id to key
+  const transformedData = transformDataWithKey(filtered); // custom id to key
   const filteredOrders =
     activeTab === 0
       ? transformedData?.filter((order) => order.assignedToID !== null)
@@ -323,7 +341,6 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
     const { orderID, ...updateData } = data;
     return orderService.fetchUpdateOrder(orderID, updateData);
   });
-  console.log(isDataEdit);
 
   const updateOrder = async (data: any) => {
     try {
@@ -416,8 +433,8 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
             focus:ring-blue-500 focus:border-blue-500 block w-full pl-3 p-1.5
               dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Search..."
-              // value={searchText}
-              // onChange={(e) => setSearchText(e.target.value)}
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
               required
             />
           </div>

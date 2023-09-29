@@ -237,7 +237,7 @@ const ChatPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
                       >
                         <div className=" flex items-center gap-1">
                           <div className="text-sm text-gray-500">
-                            {messageContent.author} ({messageContent.userID.role === "STAFF" ? "Nhân Viên" : "ADMIN"})
+                            {messageContent.author} ({messageContent.userID.role === "EMPLOYEE" ? "Nhân Viên" : "ADMIN"})
                           </div>
                           <div className="text-xs text-gray-400">
                             {chatTime(messageContent.createdAt)}
