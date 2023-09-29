@@ -243,7 +243,7 @@ const ListOrder: React.FC<Props> = ({ setLoadingBarProgress }) => {
     },
   ];
 
-  const filtered = isOrder.filter((order: any) => {
+  const filtered = isOrder?.filter((order: any) => {
     const searchTextLowerCase = searchText.toLowerCase();
     const createdAt = new Date(order.createdAt);
 
