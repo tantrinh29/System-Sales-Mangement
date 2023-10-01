@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Form, Input, Popconfirm, Table, message } from "antd";
+import { Button, Form, Input, Popconfirm, Select, Table, message } from "antd";
 import Layout from "../../components/Layout";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { ColumnsType } from "antd/es/table";
@@ -12,12 +12,14 @@ import {
   transformDataWithKey,
 } from "../../utils/custom.env";
 import { couponService } from "../../services/coupon.service";
+import { productService } from "../../services/product.service";
 
 interface DataType {
   key: React.Key;
   _id: any;
   code: any;
   discount: any;
+  product: any;
   price: any;
   createdAt: Date;
   formatTime: () => void;
@@ -42,6 +44,15 @@ const CouponPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [searchText, setSearchText] = useState<any>("");
   const [isEditing, setIsEditing] = useState<boolean>(false);
+
+  const { data: isProduct } = useQuery(
+    ["products"],
+    () => productService.fetchAllProducts(),
+    {
+      retry: 3,
+      retryDelay: 1000,
+    }
+  );
 
   const handleAdd = () => {
     setModalVisible(true);
@@ -112,6 +123,15 @@ const CouponPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
       title: "CODE",
       dataIndex: "code",
       sorter: true,
+    },
+    {
+      title: "PRODUCT",
+      sorter: true,
+      render: (record: DataType, index: any) => (
+        <p key={index} className="font-medium uppercase">
+          {record.product.nameProduct}
+        </p>
+      ),
     },
     {
       title: "DISCOUNT",
@@ -187,6 +207,7 @@ const CouponPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
       form.setFieldsValue({
         code: isDataEdit.code,
         discount: isDataEdit.discount,
+        productID: isDataEdit.productID,
         price: isDataEdit.price,
       });
     } else {
@@ -339,18 +360,37 @@ const CouponPage: React.FC<Props> = ({ setLoadingBarProgress }) => {
                 <Input size={SIZEFORM} placeholder="Nhập Giám Giá Cái Gì" />
               </Form.Item>
             </div>
-          </div>
-          <div className="mt-2">
-            <Form.Item
-              label="Price"
-              name="price"
-              style={{
-                marginBottom: 0,
-              }}
-              rules={[{ required: true, message: "* Price is required" }]}
-            >
-              <Input size={SIZEFORM} placeholder="1000000" />
-            </Form.Item>
+            <div>
+              <Form.Item
+                label="Price"
+                name="price"
+                style={{
+                  marginBottom: 0,
+                }}
+                rules={[{ required: true, message: "* Price is required" }]}
+              >
+                <Input size={SIZEFORM} placeholder="1000000" />
+              </Form.Item>
+            </div>
+            <div>
+              <Form.Item
+                label="Product"
+                name="productID"
+                style={{
+                  marginBottom: 0,
+                }}
+                rules={[{ required: true, message: "* Products is required" }]}
+              >
+                <Select size={SIZEFORM} placeholder="Sản Phẩm">
+                  <Select.Option value="">Vui Lòng Chọn Sản Phẩm</Select.Option>
+                  {isProduct?.map((item: any, index: number) => (
+                    <Select.Option key={index} value={item._id}>
+                      {item.nameProduct}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </div>
           </div>
         </Form>
       </ModalForm>
