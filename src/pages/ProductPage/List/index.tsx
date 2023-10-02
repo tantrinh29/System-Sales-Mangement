@@ -152,7 +152,7 @@ const ListProduct: React.FC<Props> = ({ setLoadingBarProgress }) => {
       title: "BRAND",
       key: "brand",
       render: (record: any) => (
-        <p className="font-medium uppercase">{record.brand[0].nameBrand}</p>
+        <p className="font-medium uppercase">{record.brand.nameBrand}</p>
       ),
     },
     {
